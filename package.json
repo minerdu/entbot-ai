@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "start": "node server.js",
+    "image:generate": "node scripts/generate-image.js",
+    "image:test": "node scripts/generate-image.js --prompt \"Connectivity test: draw a minimal blue square on white background.\" --output assets/images/_exports/connectivity-test.png --size 1024x1024 --quality low"
+  },
+  "private": true
+}

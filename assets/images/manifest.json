@@ -1,0 +1,477 @@
+{
+  "version": 4,
+  "status": "generation-plan-v4-webp-delivery-png-qr",
+  "rules": {
+    "finalNames": "stable lowercase kebab-case without version suffix",
+    "draftNames": "kebab-case with v01, v02, v03 suffix in _source or _exports",
+    "preferredFinalFormats": {
+      "uiScreenshots": "webp",
+      "generatedDiagrams": "webp",
+      "photos": "webp",
+      "qrCodes": "png"
+    },
+    "responsiveDelivery": "non-QR website images use WebP srcset candidates; QR codes stay PNG",
+    "standardWideCandidates": "1280w, 1920w, 2560w; height follows source ratio",
+    "typeAProduction": "HTML/CSS/SVG deterministic composition first; gpt-image-2 only for optional background or polish",
+    "typeBProduction": "real photo first; gpt-image-2 when no real source exists",
+    "typeAStyle": "current page mockup shell plus clean Claude-style website demo visual with real readable Chinese content",
+    "typeATextLanguage": "Chinese only, except necessary terms Agent, Skill, AI APP",
+    "finalPngCanvas": "colored stage fills the image edge; no separate white artboard, outer shadow, or double-frame effect inside the exported PNG",
+    "preflightRequired": "lock format, aspect ratio, display size, export size, template shell, source inputs, and text whitelist before generation"
+  },
+  "generationProvider": {
+    "type": "azure-openai",
+    "endpointEnv": "AZURE_OPENAI_IMAGE_ENDPOINT",
+    "keyEnv": "AZURE_OPENAI_IMAGE_API_KEY",
+    "deploymentEnv": "AZURE_OPENAI_IMAGE_DEPLOYMENT",
+    "apiVersionEnv": "AZURE_OPENAI_IMAGE_API_VERSION",
+    "defaultDeployment": "gpt-image-2",
+    "defaultPromptFramework": "assets/images/prompt-frameworks.md",
+    "note": "Deployment confirmed by Azure Foundry screenshot: gpt-image-2. Use this deployment for B route generation and optional A route background/polish. A route core images are HTML/CSS/SVG first."
+  },
+  "directories": {
+    "raw": "assets/images/_source",
+    "exports": "assets/images/_exports",
+    "home": "assets/images/home",
+    "about": "assets/images/about",
+    "services": "assets/images/services",
+    "products": "assets/images/products",
+    "cases": "assets/images/cases",
+    "contact": "assets/images/contact"
+  },
+  "assets": [
+    {
+      "id": "home-hero-growth-loop",
+      "page": "home",
+      "path": "assets/images/home/home-hero-growth-loop.png",
+      "sourceType": "html-css-composition",
+      "size": "2360x1440",
+      "status": "approved-webp-delivery",
+      "source": "assets/images/_source/compositions/home-hero-growth-loop.html",
+      "latestDraft": "assets/images/home/home-hero-growth-loop.png",
+      "deliveryFormat": "webp-srcset",
+      "fallback": "assets/images/home/home-hero-growth-loop.png",
+      "responsive": [
+        "assets/images/home/home-hero-growth-loop-1280.webp",
+        "assets/images/home/home-hero-growth-loop-1920.webp",
+        "assets/images/home/home-hero-growth-loop-2560.webp"
+      ]
+    },
+    {
+      "id": "home-challenge-factory-growth-flow",
+      "page": "home",
+      "path": "assets/images/home/home-challenge-factory-growth-flow.png",
+      "sourceType": "html-css-composition",
+      "size": "2360x1320",
+      "status": "approved-webp-delivery",
+      "source": "assets/images/_source/compositions/home-challenge-growth-flows.html",
+      "latestDraft": "assets/images/home/home-challenge-factory-growth-flow.png",
+      "deliveryFormat": "webp-srcset",
+      "fallback": "assets/images/home/home-challenge-factory-growth-flow.png",
+      "responsive": [
+        "assets/images/home/home-challenge-factory-growth-flow-1280.webp",
+        "assets/images/home/home-challenge-factory-growth-flow-1920.webp",
+        "assets/images/home/home-challenge-factory-growth-flow-2560.webp"
+      ]
+    },
+    {
+      "id": "home-challenge-chain-growth-flow",
+      "page": "home",
+      "path": "assets/images/home/home-challenge-chain-growth-flow.png",
+      "sourceType": "html-css-composition",
+      "size": "2360x1320",
+      "status": "approved-webp-delivery",
+      "source": "assets/images/_source/compositions/home-challenge-growth-flows.html",
+      "latestDraft": "assets/images/home/home-challenge-chain-growth-flow.png",
+      "deliveryFormat": "webp-srcset",
+      "fallback": "assets/images/home/home-challenge-chain-growth-flow.png",
+      "responsive": [
+        "assets/images/home/home-challenge-chain-growth-flow-1280.webp",
+        "assets/images/home/home-challenge-chain-growth-flow-1920.webp",
+        "assets/images/home/home-challenge-chain-growth-flow-2560.webp"
+      ]
+    },
+    {
+      "id": "home-skill-agent-method",
+      "page": "home",
+      "path": "assets/images/home/home-skill-agent-method.png",
+      "sourceType": "html-css-composition",
+      "size": "2360x1320",
+      "status": "approved-webp-delivery",
+      "source": "assets/images/_source/compositions/home-skill-agent-method.html",
+      "latestDraft": "assets/images/home/home-skill-agent-method.png",
+      "deliveryFormat": "webp-srcset",
+      "fallback": "assets/images/home/home-skill-agent-method.png",
+      "responsive": [
+        "assets/images/home/home-skill-agent-method-1280.webp",
+        "assets/images/home/home-skill-agent-method-1920.webp",
+        "assets/images/home/home-skill-agent-method-2560.webp"
+      ]
+    },
+    {
+      "id": "home-industry-brand-growth-flow",
+      "page": "home",
+      "path": "assets/images/home/home-industry-brand-growth-flow.png",
+      "sourceType": "html-css-composition",
+      "size": "2360x1320",
+      "status": "approved-webp-delivery",
+      "source": "assets/images/_source/compositions/home-industry-growth-flows.html",
+      "latestDraft": "assets/images/home/home-industry-brand-growth-flow.png",
+      "deliveryFormat": "webp-srcset",
+      "fallback": "assets/images/home/home-industry-brand-growth-flow.png",
+      "responsive": [
+        "assets/images/home/home-industry-brand-growth-flow-1280.webp",
+        "assets/images/home/home-industry-brand-growth-flow-1920.webp",
+        "assets/images/home/home-industry-brand-growth-flow-2560.webp"
+      ]
+    },
+    {
+      "id": "home-industry-local-growth-flow",
+      "page": "home",
+      "path": "assets/images/home/home-industry-local-growth-flow.png",
+      "sourceType": "html-css-composition",
+      "size": "2360x1320",
+      "status": "approved-webp-delivery",
+      "source": "assets/images/_source/compositions/home-industry-growth-flows.html",
+      "latestDraft": "assets/images/home/home-industry-local-growth-flow.png",
+      "deliveryFormat": "webp-srcset",
+      "fallback": "assets/images/home/home-industry-local-growth-flow.png",
+      "responsive": [
+        "assets/images/home/home-industry-local-growth-flow-1280.webp",
+        "assets/images/home/home-industry-local-growth-flow-1920.webp",
+        "assets/images/home/home-industry-local-growth-flow-2560.webp"
+      ]
+    },
+    {
+      "id": "home-first-flow-scenarios",
+      "page": "home",
+      "path": "assets/images/home/home-first-flow-scenarios.png",
+      "sourceType": "html-css-composition",
+      "size": "2360x1320",
+      "status": "approved-webp-delivery",
+      "source": "assets/images/_source/compositions/home-first-flow-scenarios.html",
+      "latestDraft": "assets/images/home/home-first-flow-scenarios.png",
+      "deliveryFormat": "webp-srcset",
+      "fallback": "assets/images/home/home-first-flow-scenarios.png",
+      "responsive": [
+        "assets/images/home/home-first-flow-scenarios-1280.webp",
+        "assets/images/home/home-first-flow-scenarios-1920.webp",
+        "assets/images/home/home-first-flow-scenarios-2560.webp"
+      ]
+    },
+    {
+      "id": "home-lizi-flagship",
+      "page": "home",
+      "path": "assets/images/home/home-lizi-flagship.png",
+      "sourceType": "html-css-composition",
+      "size": "2360x1320",
+      "status": "approved-webp-delivery",
+      "source": "assets/images/_source/compositions/home-case-lizi-growth-loop-preview.html",
+      "latestDraft": "assets/images/home/home-lizi-flagship.png",
+      "deliveryFormat": "webp-srcset",
+      "fallback": "assets/images/home/home-lizi-flagship.png",
+      "responsive": [
+        "assets/images/home/home-lizi-flagship-1280.webp",
+        "assets/images/home/home-lizi-flagship-1920.webp",
+        "assets/images/home/home-lizi-flagship-2560.webp"
+      ]
+    },
+    {
+      "id": "home-ai-growth-interface",
+      "page": "home",
+      "path": "assets/images/home/home-ai-growth-interface.png",
+      "sourceType": "html-css-composition-with-server-app-screenshot",
+      "source": "assets/images/_source/compositions/home-ai-app-interfaces.html",
+      "size": "2360x1320",
+      "status": "approved-webp-delivery",
+      "fallback": "assets/images/home/home-ai-growth-interface.png",
+      "responsive": [
+        "assets/images/home/home-ai-growth-interface-1280.webp",
+        "assets/images/home/home-ai-growth-interface-1920.webp",
+        "assets/images/home/home-ai-growth-interface-2560.webp"
+      ]
+    },
+    {
+      "id": "home-ai-fran-interface",
+      "page": "home",
+      "path": "assets/images/home/home-ai-fran-interface.png",
+      "sourceType": "html-css-composition-with-server-app-screenshot",
+      "source": "assets/images/_source/compositions/home-ai-app-interfaces.html",
+      "size": "2360x1320",
+      "status": "approved-webp-delivery",
+      "fallback": "assets/images/home/home-ai-fran-interface.png",
+      "responsive": [
+        "assets/images/home/home-ai-fran-interface-1280.webp",
+        "assets/images/home/home-ai-fran-interface-1920.webp",
+        "assets/images/home/home-ai-fran-interface-2560.webp"
+      ]
+    },
+    {
+      "id": "home-ai-ops-interface",
+      "page": "home",
+      "path": "assets/images/home/home-ai-ops-interface.png",
+      "sourceType": "html-css-composition-with-server-app-screenshot",
+      "source": "assets/images/_source/compositions/home-ai-app-interfaces.html",
+      "size": "2360x1320",
+      "status": "approved-webp-delivery",
+      "fallback": "assets/images/home/home-ai-ops-interface.png",
+      "responsive": [
+        "assets/images/home/home-ai-ops-interface-1280.webp",
+        "assets/images/home/home-ai-ops-interface-1920.webp",
+        "assets/images/home/home-ai-ops-interface-2560.webp"
+      ]
+    },
+    {
+      "id": "home-ai-train-interface",
+      "page": "home",
+      "path": "assets/images/home/home-ai-train-interface.png",
+      "sourceType": "html-css-composition-with-server-app-screenshot",
+      "source": "assets/images/_source/compositions/home-ai-app-interfaces.html",
+      "size": "2360x1320",
+      "status": "approved-webp-delivery",
+      "fallback": "assets/images/home/home-ai-train-interface.png",
+      "responsive": [
+        "assets/images/home/home-ai-train-interface-1280.webp",
+        "assets/images/home/home-ai-train-interface-1920.webp",
+        "assets/images/home/home-ai-train-interface-2560.webp"
+      ]
+    },
+    {
+      "id": "about-company-growth-system",
+      "page": "about",
+      "path": "assets/images/about/company-growth-system.png",
+      "sourceType": "gpt-image-2",
+      "size": "1792x1024",
+      "status": "planned"
+    },
+    {
+      "id": "about-company-positioning",
+      "page": "about",
+      "path": "assets/images/about/company-positioning.png",
+      "sourceType": "gpt-image-2",
+      "size": "1536x1024",
+      "status": "planned"
+    },
+    {
+      "id": "about-ai-project-failure-map",
+      "page": "about",
+      "path": "assets/images/about/ai-project-failure-map.png",
+      "sourceType": "gpt-image-2",
+      "size": "1536x1024",
+      "status": "planned"
+    },
+    {
+      "id": "about-agent-skill-app-method",
+      "page": "about",
+      "path": "assets/images/about/agent-skill-app-method.png",
+      "sourceType": "gpt-image-2",
+      "size": "1536x1024",
+      "status": "planned"
+    },
+    {
+      "id": "services-hero-growth-workflow",
+      "page": "services",
+      "path": "assets/images/services/service-hero-growth-workflow.png",
+      "sourceType": "gpt-image-2",
+      "size": "1792x1024",
+      "status": "planned"
+    },
+    {
+      "id": "services-content-map",
+      "page": "services",
+      "path": "assets/images/services/service-content-map.png",
+      "sourceType": "gpt-image-2",
+      "size": "1600x1200",
+      "status": "planned"
+    },
+    {
+      "id": "services-growth-consulting-map",
+      "page": "services",
+      "path": "assets/images/services/growth-consulting-map.png",
+      "sourceType": "gpt-image-2",
+      "size": "1536x1024",
+      "status": "planned"
+    },
+    {
+      "id": "services-agent-skill-benchmark-flow",
+      "page": "services",
+      "path": "assets/images/services/agent-skill-benchmark-flow.png",
+      "sourceType": "gpt-image-2",
+      "size": "1536x1024",
+      "status": "planned"
+    },
+    {
+      "id": "services-ai-growth-workflow",
+      "page": "services",
+      "path": "assets/images/services/ai-growth-workflow.png",
+      "sourceType": "ai-app-screenshot-or-gpt-image-2",
+      "size": "1536x1024",
+      "status": "planned"
+    },
+    {
+      "id": "services-ai-fran-workflow",
+      "page": "services",
+      "path": "assets/images/services/ai-fran-workflow.png",
+      "sourceType": "ai-app-screenshot-or-gpt-image-2",
+      "size": "1536x1024",
+      "status": "planned"
+    },
+    {
+      "id": "services-ai-ops-workflow",
+      "page": "services",
+      "path": "assets/images/services/ai-ops-workflow.png",
+      "sourceType": "ai-app-screenshot-or-gpt-image-2",
+      "size": "1536x1024",
+      "status": "planned"
+    },
+    {
+      "id": "services-ai-train-workflow",
+      "page": "services",
+      "path": "assets/images/services/ai-train-workflow.png",
+      "sourceType": "ai-app-screenshot-or-gpt-image-2",
+      "size": "1536x1024",
+      "status": "planned"
+    },
+    {
+      "id": "services-cooperation-cycle",
+      "page": "services",
+      "path": "assets/images/services/cooperation-cycle.png",
+      "sourceType": "gpt-image-2",
+      "size": "1536x1024",
+      "status": "planned"
+    },
+    {
+      "id": "services-project-scope-pricing-model",
+      "page": "services",
+      "path": "assets/images/services/project-scope-pricing-model.png",
+      "sourceType": "gpt-image-2",
+      "size": "1536x1024",
+      "status": "planned"
+    },
+    {
+      "id": "contact-wecom-qr",
+      "page": "contact",
+      "path": "assets/images/contact/contact-wecom-qr.png",
+      "sourceType": "client-supplied",
+      "size": "520x520",
+      "status": "waiting-for-source"
+    },
+    {
+      "id": "contact-official-account-qr",
+      "page": "contact",
+      "path": "assets/images/contact/contact-official-account-qr.png",
+      "sourceType": "client-supplied",
+      "size": "520x520",
+      "status": "waiting-for-source"
+    },
+    {
+      "id": "contact-video-account-qr",
+      "page": "contact",
+      "path": "assets/images/contact/contact-video-account-qr.png",
+      "sourceType": "client-supplied",
+      "size": "520x520",
+      "status": "waiting-for-source"
+    }
+  ],
+  "caseAssets": {
+    "lizi": [
+      "cases/lizi-space/lizi-entry-station-tall.png",
+      "cases/lizi-space/lizi-skin-report-v4.png"
+    ],
+    "robot": [
+      "cases/robot/padbot-scene-commerce.png"
+    ],
+    "beauty": [],
+    "edu": []
+  },
+  "productScreenshotGroups": {
+    "ai-growth": [
+      "matrix-overview.png",
+      "matrix-budget.png",
+      "matrix-diagnosis.png",
+      "matrix-guard.png",
+      "assets-library.png",
+      "assets-generate.png",
+      "assets-version.png",
+      "assets-bundle.png",
+      "ai-command.png",
+      "ai-workflow.png",
+      "ai-timeline.png",
+      "ai-record.png",
+      "publish-accounts.png",
+      "publish-gate.png",
+      "publish-requirements.png",
+      "publish-queue.png",
+      "settings-model.png",
+      "settings-skills.png",
+      "settings-sop.png",
+      "settings-connectors.png"
+    ],
+    "ai-fran": [
+      "leads-pool.png",
+      "leads-score.png",
+      "leads-profile.png",
+      "leads-group.png",
+      "workflow-events.png",
+      "workflow-playbook.png",
+      "workflow-referral.png",
+      "workflow-record.png",
+      "ai-command.png",
+      "ai-intent.png",
+      "ai-tracking.png",
+      "ai-linked-context.png",
+      "approval-list.png",
+      "approval-detail.png",
+      "approval-risk.png",
+      "approval-action.png",
+      "settings-advisor.png",
+      "settings-benchmark-skills.png",
+      "settings-documents.png",
+      "settings-crm.png"
+    ],
+    "ai-ops": [
+      "customers-overview.png",
+      "customers-messages.png",
+      "customers-auto-reply.png",
+      "customers-sop-wakeup.png",
+      "workflow-calendar.png",
+      "workflow-timeline.png",
+      "workflow-targets.png",
+      "workflow-builder.png",
+      "ai-command.png",
+      "ai-reply-suggestion.png",
+      "ai-actions.png",
+      "ai-report.png",
+      "approval-status.png",
+      "approval-reason-preview.png",
+      "approval-drawer.png",
+      "approval-action.png",
+      "settings-sop-template.png",
+      "settings-trigger-radar.png",
+      "settings-action-speech.png",
+      "settings-model-crm-metrics.png"
+    ],
+    "ai-train": [
+      "tasks-status.png",
+      "tasks-ai-advice.png",
+      "tasks-card.png",
+      "tasks-drawer.png",
+      "practice-map.png",
+      "practice-scenario.png",
+      "practice-ability.png",
+      "practice-review.png",
+      "ai-coach-command.png",
+      "ai-coach-remedial.png",
+      "ai-coach-role-advice.png",
+      "ai-coach-feedback.png",
+      "roles-switch.png",
+      "roles-stage.png",
+      "roles-action-grid.png",
+      "roles-signal.png",
+      "skill-coach-setting.png",
+      "skill-folder.png",
+      "skill-train-sop.png",
+      "skill-permission.png"
+    ]
+  }
+}
