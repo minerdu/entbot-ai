@@ -25744,7 +25744,9 @@ body.service-page .main {
   .cases-page .final-product-cta .section-title,
   .service-page .final-product-cta .section-title,
   .contact-page .contact-final-cta .section-title {
-    font-size: clamp(14px, 4.3vw, 34px);
+    font-size: clamp(32px, 8.8vw, 40px);
+    line-height: 1.14;
+    white-space: normal;
   }
 }
 
