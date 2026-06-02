@@ -1,0 +1,1715 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>home-industry-growth-flows</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 2360px;
+        margin: 0;
+        overflow: visible;
+        background: #fffdf8;
+        color: #171717;
+        font-family:
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          "PingFang SC",
+          "Microsoft YaHei",
+          "Noto Sans CJK SC",
+          Arial,
+          sans-serif;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      html::-webkit-scrollbar,
+      body::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+      }
+
+      body {
+        display: grid;
+        gap: 80px;
+        padding: 0;
+      }
+
+      html:has(#industry-brand:target) body,
+      html:has(#industry-local:target) body {
+        gap: 0;
+      }
+
+      html:has(#industry-brand:target) #industry-local,
+      html:has(#industry-local:target) #industry-brand {
+        display: none;
+      }
+
+      .artboard {
+        position: relative;
+        width: 2360px;
+        height: 1320px;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 10% 14%, rgba(255, 255, 255, 0.85) 0 14%, transparent 15%),
+          radial-gradient(circle at 92% 90%, rgba(226, 235, 255, 0.62), transparent 34%),
+          linear-gradient(135deg, #fffdf8 0%, #fbf7ef 42%, #f5fbf7 100%);
+      }
+
+      .artboard::before,
+      .artboard::after {
+        position: absolute;
+        content: "";
+        pointer-events: none;
+      }
+
+      .artboard::before {
+        display: none;
+      }
+
+      .industry-local {
+        background:
+          radial-gradient(circle at 10% 14%, rgba(255, 255, 255, 0.86) 0 14%, transparent 15%),
+          radial-gradient(circle at 90% 88%, rgba(214, 245, 229, 0.72), transparent 34%),
+          linear-gradient(135deg, #fffdf8 0%, #fff2ee 43%, #f2fbf7 100%);
+      }
+
+      .artboard::after {
+        display: none;
+      }
+
+      .stage {
+        position: absolute;
+        z-index: 1;
+        inset: 0;
+        overflow: hidden;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .stage::before {
+        position: absolute;
+        inset: 0;
+        opacity: 0.18;
+        background:
+          linear-gradient(90deg, rgba(20, 20, 20, 0.05) 1px, transparent 1px) 0 0 / 112px 112px,
+          linear-gradient(180deg, rgba(20, 20, 20, 0.045) 1px, transparent 1px) 0 0 / 112px 112px;
+        content: "";
+      }
+
+      .layout {
+        position: relative;
+        z-index: 1;
+        height: 100%;
+        display: grid;
+        grid-template-columns: 560px minmax(0, 1fr);
+        gap: 74px;
+        align-items: stretch;
+        padding: 118px 98px;
+      }
+
+      .summary {
+        display: grid;
+        grid-template-rows: auto auto auto auto auto;
+        gap: 30px;
+        align-content: center;
+        min-width: 0;
+      }
+
+      .summary-kicker {
+        display: inline-flex;
+        width: fit-content;
+        align-items: center;
+        gap: 14px;
+        padding: 11px 20px;
+        border: 1px solid rgba(24, 24, 24, 0.08);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.78);
+        color: #4f5965;
+        font-size: 22px;
+        font-weight: 850;
+        box-shadow: 0 14px 32px rgba(31, 34, 38, 0.06);
+      }
+
+      .summary-kicker i {
+        width: 16px;
+        height: 16px;
+        border-radius: 999px;
+        background: var(--accent);
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-family:
+          "Songti SC",
+          "Noto Serif SC",
+          STSong,
+          SimSun,
+          serif;
+        color: #171717;
+        font-size: 74px;
+        font-weight: 700;
+        letter-spacing: 0;
+        line-height: 1.02;
+      }
+
+      h1 span {
+        display: block;
+      }
+
+      .lede {
+        max-width: 540px;
+        color: #545d68;
+        font-size: 29px;
+        font-weight: 650;
+        line-height: 1.48;
+      }
+
+      .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 50px;
+        padding: 9px 20px;
+        border: 1px solid rgba(26, 26, 26, 0.08);
+        border-radius: 999px;
+        background: #f5f2eb;
+        color: #40454c;
+        font-size: 24px;
+        font-weight: 850;
+        line-height: 1;
+      }
+
+      .diagnosis {
+        display: grid;
+        gap: 14px;
+        padding: 26px;
+        border: 1px solid rgba(24, 24, 24, 0.08);
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.62);
+      }
+
+      .diagnosis h2 {
+        color: #1d1d1d;
+        font-size: 30px;
+        font-weight: 900;
+        line-height: 1.1;
+      }
+
+      .diagnosis-row {
+        display: grid;
+        grid-template-columns: 22px 1fr auto;
+        gap: 14px;
+        align-items: center;
+        min-height: 44px;
+        color: #545d68;
+        font-size: 24px;
+        font-weight: 760;
+      }
+
+      .diagnosis-row i {
+        width: 16px;
+        height: 16px;
+        border-radius: 999px;
+        background: var(--dot, var(--accent));
+        box-shadow: 0 0 0 8px color-mix(in srgb, var(--dot, var(--accent)) 16%, transparent);
+      }
+
+      .diagnosis-row b {
+        color: #171717;
+        font-size: 23px;
+        font-weight: 900;
+      }
+
+      .black-note {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        min-height: 70px;
+        padding: 16px 22px;
+        border-radius: 22px;
+        background: #141414;
+        color: #f8f4eb;
+        box-shadow: 0 20px 46px rgba(20, 20, 20, 0.2);
+      }
+
+      .black-note strong {
+        flex: 0 0 auto;
+        font-size: 25px;
+        font-weight: 900;
+      }
+
+      .black-note span {
+        color: rgba(255, 255, 255, 0.78);
+        font-size: 22px;
+        font-weight: 760;
+        line-height: 1.28;
+      }
+
+      .priority-card {
+        position: relative;
+        overflow: hidden;
+        display: grid;
+        align-content: center;
+        min-height: 294px;
+        padding: 34px 32px;
+        border: 1px solid rgba(24, 24, 24, 0.08);
+        border-radius: 34px;
+        background:
+          radial-gradient(circle at 85% 20%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 36%),
+          rgba(255, 255, 255, 0.72);
+        box-shadow: 0 24px 60px rgba(38, 35, 29, 0.08);
+      }
+
+      .priority-card::after {
+        position: absolute;
+        right: -58px;
+        bottom: -68px;
+        width: 210px;
+        height: 210px;
+        border: 32px solid color-mix(in srgb, var(--accent) 16%, transparent);
+        border-radius: 50%;
+        content: "";
+      }
+
+      .priority-label {
+        display: inline-flex;
+        align-items: center;
+        min-height: 40px;
+        padding: 7px 15px;
+        border-radius: 999px;
+        background: #171717;
+        color: #fffdf8;
+        font-size: 21px;
+        font-weight: 900;
+      }
+
+      .priority-card h2 {
+        position: relative;
+        z-index: 1;
+        max-width: 430px;
+        margin-top: 20px;
+        color: #171717;
+        font-size: 42px;
+        font-weight: 940;
+        line-height: 1.12;
+      }
+
+      .priority-card p {
+        position: relative;
+        z-index: 1;
+        max-width: 440px;
+        margin-top: 18px;
+        color: #59636f;
+        font-size: 24px;
+        font-weight: 720;
+        line-height: 1.42;
+      }
+
+      .priority-close {
+        position: relative;
+        z-index: 1;
+        display: inline-flex;
+        width: fit-content;
+        align-items: center;
+        gap: 12px;
+        min-height: 46px;
+        margin-top: 24px;
+        padding: 8px 16px;
+        border-radius: 999px;
+        background: #171717;
+        color: #fffdf8;
+        font-size: 22px;
+        font-weight: 900;
+        line-height: 1;
+      }
+
+      .priority-close i {
+        width: 13px;
+        height: 13px;
+        border-radius: 999px;
+        background: var(--accent);
+      }
+
+      .priority-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        align-self: end;
+      }
+
+      .priority-tile {
+        min-height: 96px;
+        padding: 16px;
+        border: 1px solid rgba(24, 24, 24, 0.08);
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.68);
+      }
+
+      .priority-tile b {
+        display: block;
+        color: #171717;
+        font-size: 28px;
+        font-weight: 940;
+        line-height: 1;
+      }
+
+      .priority-tile span {
+        display: block;
+        margin-top: 10px;
+        color: #5a6470;
+        font-size: 21px;
+        font-weight: 760;
+        line-height: 1.2;
+      }
+
+      .focus-route {
+        display: grid;
+        gap: 12px;
+        padding: 22px;
+        border: 1px solid rgba(24, 24, 24, 0.08);
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.62);
+      }
+
+      .focus-route h2 {
+        color: #171717;
+        font-size: 29px;
+        font-weight: 940;
+        line-height: 1.15;
+      }
+
+      .route-line {
+        display: grid;
+        grid-template-columns: 1fr 28px 1fr;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .route-line span {
+        display: grid;
+        place-items: center;
+        min-height: 48px;
+        padding: 8px 12px;
+        border-radius: 18px;
+        background: #f5f2eb;
+        color: #30343a;
+        font-size: 22px;
+        font-weight: 860;
+        text-align: center;
+      }
+
+      .route-line i {
+        display: grid;
+        place-items: center;
+        color: var(--accent);
+        font-size: 24px;
+        font-style: normal;
+        font-weight: 950;
+      }
+
+      .map-panel {
+        position: relative;
+        display: block;
+        min-height: 100%;
+        padding: 40px;
+        overflow: hidden;
+        border: 1px solid rgba(24, 24, 24, 0.08);
+        border-radius: 40px;
+        background:
+          radial-gradient(circle at 88% 20%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 34%),
+          linear-gradient(135deg, rgba(255, 255, 255, 0.9), var(--soft));
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.74);
+      }
+
+      .map-panel::before {
+        position: absolute;
+        left: 32px;
+        right: 32px;
+        top: 291px;
+        height: 2px;
+        opacity: 0.62;
+        background-image: linear-gradient(90deg, rgba(27, 27, 27, 0.14) 50%, transparent 50%);
+        background-size: 22px 2px;
+        content: "";
+      }
+
+      .map-head {
+        position: absolute;
+        left: 40px;
+        right: 40px;
+        top: 86px;
+        z-index: 1;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 28px;
+      }
+
+      .map-head h2 {
+        color: #171717;
+        font-size: 43px;
+        font-weight: 920;
+        line-height: 1.1;
+      }
+
+      .map-head p {
+        margin-top: 10px;
+        color: #5f6874;
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 1.35;
+      }
+
+      .map-metric {
+        display: grid;
+        grid-template-columns: repeat(3, auto);
+        gap: 12px;
+        align-items: center;
+        flex: 0 0 auto;
+      }
+
+      .metric-pill {
+        min-width: 108px;
+        padding: 12px 16px;
+        border: 1px solid rgba(24, 24, 24, 0.08);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.75);
+        color: #59636f;
+        font-size: 21px;
+        font-weight: 830;
+        text-align: center;
+      }
+
+      .metric-pill b {
+        display: block;
+        margin-bottom: 4px;
+        color: #171717;
+        font-size: 30px;
+        line-height: 1;
+      }
+
+      .map-body {
+        position: static;
+        z-index: 1;
+        display: block;
+      }
+
+      .focus-strip {
+        position: absolute;
+        left: 40px;
+        right: 40px;
+        top: 238px;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 14px;
+      }
+
+      .focus-chip {
+        min-height: 102px;
+        padding: 20px 22px;
+        border: 1px solid rgba(24, 24, 24, 0.08);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.72);
+      }
+
+      .focus-chip strong {
+        display: block;
+        color: #171717;
+        font-size: 30px;
+        font-weight: 940;
+        line-height: 1.1;
+      }
+
+      .focus-chip span {
+        display: block;
+        margin-top: 8px;
+        color: #5a6470;
+        font-size: 24px;
+        font-weight: 740;
+        line-height: 1.22;
+      }
+
+      .flow-lane {
+        position: absolute;
+        left: 40px;
+        right: 40px;
+        top: 388px;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
+        align-items: stretch;
+        min-height: 418px;
+      }
+
+      .flow-lane::before {
+        position: absolute;
+        left: 7%;
+        right: 7%;
+        top: 76px;
+        height: 7px;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--accent) 26%, #ffffff);
+        content: "";
+      }
+
+      .station {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-rows: auto auto 1fr auto;
+        gap: 18px;
+        min-height: 418px;
+        padding: 25px;
+        border: 1px solid rgba(24, 24, 24, 0.08);
+        border-radius: 30px;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 18px 46px rgba(45, 42, 36, 0.07);
+      }
+
+      .station.key {
+        border-color: color-mix(in srgb, var(--accent) 38%, rgba(24, 24, 24, 0.08));
+        background:
+          radial-gradient(circle at 88% 15%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 34%),
+          rgba(255, 255, 255, 0.96);
+        box-shadow: 0 26px 68px color-mix(in srgb, var(--accent) 13%, transparent);
+      }
+
+      .station-num {
+        display: grid;
+        place-items: center;
+        width: 72px;
+        height: 72px;
+        border-radius: 999px;
+        background: var(--step);
+        color: #171717;
+        font-size: 30px;
+        font-weight: 950;
+      }
+
+      .station h3 {
+        color: #171717;
+        font-size: 36px;
+        font-weight: 940;
+        line-height: 1.12;
+      }
+
+      .station p {
+        color: #59636f;
+        font-size: 26px;
+        font-weight: 720;
+        line-height: 1.3;
+      }
+
+      .app-tag {
+        display: inline-flex;
+        width: fit-content;
+        align-items: center;
+        gap: 10px;
+        min-height: 42px;
+        padding: 7px 14px;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--app) 13%, #ffffff);
+        color: color-mix(in srgb, var(--app) 72%, #101010);
+        font-size: 24px;
+        font-weight: 920;
+      }
+
+      .app-tag i {
+        width: 13px;
+        height: 13px;
+        border-radius: 999px;
+        background: var(--app);
+      }
+
+      .handoff-row {
+        position: absolute;
+        left: 40px;
+        right: 40px;
+        top: 854px;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 14px;
+      }
+
+      .handoff-card {
+        min-height: 146px;
+        padding: 25px 26px;
+        border: 1px solid rgba(24, 24, 24, 0.08);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.72);
+      }
+
+      .handoff-card b {
+        display: block;
+        color: #171717;
+        font-size: 30px;
+        font-weight: 940;
+        line-height: 1.1;
+      }
+
+      .handoff-card span {
+        display: block;
+        margin-top: 9px;
+        color: #5a6470;
+        font-size: 24px;
+        font-weight: 730;
+        line-height: 1.26;
+      }
+
+      .process-stack {
+        display: grid;
+        grid-template-rows: repeat(4, 1fr);
+        gap: 18px;
+      }
+
+      .step-card {
+        position: relative;
+        display: grid;
+        grid-template-columns: 82px minmax(0, 1fr) 132px;
+        gap: 22px;
+        align-items: center;
+        min-height: 132px;
+        padding: 24px 26px;
+        border: 1px solid rgba(24, 24, 24, 0.08);
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.86);
+        box-shadow: 0 18px 44px rgba(45, 42, 36, 0.07);
+      }
+
+      .step-card::after {
+        position: absolute;
+        left: 65px;
+        bottom: -24px;
+        width: 28px;
+        height: 28px;
+        border-right: 3px solid color-mix(in srgb, var(--accent) 55%, #ffffff);
+        border-bottom: 3px solid color-mix(in srgb, var(--accent) 55%, #ffffff);
+        transform: rotate(45deg);
+        content: "";
+      }
+
+      .step-card:last-child::after {
+        display: none;
+      }
+
+      .step-num {
+        display: grid;
+        place-items: center;
+        width: 74px;
+        height: 74px;
+        border-radius: 999px;
+        background: var(--step);
+        color: #171717;
+        font-size: 31px;
+        font-weight: 950;
+      }
+
+      .step-copy {
+        min-width: 0;
+      }
+
+      .step-copy b {
+        display: block;
+        color: #171717;
+        font-size: 33px;
+        font-weight: 930;
+        line-height: 1.12;
+      }
+
+      .step-copy span {
+        display: block;
+        margin-top: 10px;
+        color: #59636f;
+        font-size: 23px;
+        font-weight: 720;
+        line-height: 1.32;
+      }
+
+      .mini-chart {
+        display: grid;
+        align-items: end;
+        justify-content: center;
+        grid-template-columns: repeat(3, 24px);
+        gap: 10px;
+        height: 72px;
+        padding-top: 6px;
+      }
+
+      .mini-chart i {
+        display: block;
+        border-radius: 999px 999px 8px 8px;
+        background: var(--bar, var(--accent));
+        opacity: 0.82;
+      }
+
+      .mini-chart i:nth-child(1) {
+        height: 38px;
+        opacity: 0.42;
+      }
+
+      .mini-chart i:nth-child(2) {
+        height: 52px;
+        opacity: 0.6;
+      }
+
+      .mini-chart i:nth-child(3) {
+        height: 68px;
+      }
+
+      .app-column {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        gap: 18px;
+      }
+
+      .app-card {
+        min-height: 124px;
+        padding: 22px 24px;
+        border: 1px solid rgba(24, 24, 24, 0.08);
+        border-radius: 26px;
+        background: rgba(255, 255, 255, 0.78);
+      }
+
+      .app-card h3 {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #1b1b1b;
+        font-size: 27px;
+        font-weight: 930;
+        line-height: 1.12;
+      }
+
+      .app-card h3 i {
+        width: 18px;
+        height: 18px;
+        border-radius: 999px;
+        background: var(--app);
+        box-shadow: 0 0 0 8px color-mix(in srgb, var(--app) 16%, transparent);
+      }
+
+      .app-card p {
+        margin-top: 13px;
+        color: #59636f;
+        font-size: 22px;
+        font-weight: 730;
+        line-height: 1.32;
+      }
+
+      .app-grid {
+        display: grid;
+        gap: 14px;
+      }
+
+      .loop-card {
+        display: grid;
+        place-items: center;
+        min-height: 144px;
+        padding: 24px;
+        border-radius: 28px;
+        background: #171717;
+        color: #fffdf8;
+        box-shadow: 0 22px 58px rgba(23, 23, 23, 0.18);
+      }
+
+      .loop-card b {
+        font-size: 31px;
+        font-weight: 950;
+        line-height: 1.1;
+      }
+
+      .loop-card span {
+        margin-top: 8px;
+        color: rgba(255, 255, 255, 0.74);
+        font-size: 22px;
+        font-weight: 760;
+        line-height: 1.28;
+        text-align: center;
+      }
+
+      .bottom-band {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+      }
+
+      .band-item {
+        min-height: 78px;
+        display: grid;
+        place-items: center;
+        padding: 14px 18px;
+        border: 1px solid rgba(24, 24, 24, 0.08);
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.72);
+        color: #30343a;
+        font-size: 24px;
+        font-weight: 880;
+        text-align: center;
+      }
+
+      .industry-brand {
+        --accent: #3478f6;
+        --soft: #e1eaff;
+        --step: #f3efe7;
+      }
+
+      .industry-local {
+        --accent: #22b97f;
+        --soft: #dcf7ea;
+        --step: #f5efe7;
+      }
+
+      .blue {
+        --dot: #3478f6;
+        --app: #3478f6;
+        --bar: #3478f6;
+      }
+
+      .green {
+        --dot: #20b978;
+        --app: #20b978;
+        --bar: #20b978;
+      }
+
+      .orange {
+        --dot: #f29a3b;
+        --app: #f29a3b;
+        --bar: #f29a3b;
+      }
+
+      .purple {
+        --dot: #8b5cf6;
+        --app: #8b5cf6;
+        --bar: #8b5cf6;
+      }
+
+      .pink {
+        --dot: #ee8dae;
+        --app: #ee8dae;
+        --bar: #ee8dae;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        overflow: hidden;
+        background: transparent;
+      }
+
+      body {
+        display: block;
+        padding: 0;
+      }
+
+      .artboard {
+        transform-origin: top left;
+      }
+
+      @media (max-width: 720px) {
+        html,
+        body {
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          background: transparent;
+        }
+
+        .artboard {
+          width: 100%;
+          height: 100%;
+          transform: none !important;
+        }
+
+        .stage {
+          position: relative;
+          inset: auto;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          border-radius: 0;
+        }
+
+        .layout {
+          height: 100%;
+          grid-template-columns: 1fr;
+          gap: 12px;
+          padding: 16px;
+          overflow: hidden;
+        }
+
+        .summary {
+          gap: 12px;
+          align-content: start;
+        }
+
+        .summary-kicker {
+          min-height: 30px;
+          gap: 8px;
+          padding: 5px 10px;
+          font-size: 12px;
+        }
+
+        .summary-kicker i {
+          width: 9px;
+          height: 9px;
+        }
+
+        h1 {
+          font-size: 34px;
+          line-height: 1.05;
+          white-space: nowrap;
+        }
+
+        h1 span {
+          display: inline;
+        }
+
+        .lede {
+          max-width: none;
+          font-size: 15px;
+          line-height: 1.48;
+        }
+
+        .priority-card {
+          min-height: auto;
+          padding: 14px;
+          border-radius: 18px;
+        }
+
+        .priority-label,
+        .priority-close {
+          min-height: 24px;
+          padding: 0 9px;
+          font-size: 11px;
+        }
+
+        .priority-card h2 {
+          margin-top: 10px;
+          font-size: 23px;
+        }
+
+        .priority-card p {
+          margin-top: 8px;
+          font-size: 13px;
+          line-height: 1.42;
+        }
+
+        .priority-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 8px;
+        }
+
+        .priority-tile {
+          min-height: 58px;
+          padding: 9px;
+          border-radius: 12px;
+        }
+
+        .priority-tile b {
+          font-size: 13px;
+        }
+
+        .priority-tile span {
+          font-size: 10px;
+          line-height: 1.25;
+        }
+
+        .map-panel {
+          padding: 14px;
+          border-radius: 20px;
+        }
+
+        .map-head {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        .map-head h2 {
+          font-size: 22px;
+          line-height: 1.16;
+        }
+
+        .map-head p {
+          margin-top: 6px;
+          font-size: 13px;
+          line-height: 1.42;
+        }
+
+        .map-metric {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 8px;
+        }
+
+        .metric-pill {
+          min-height: 52px;
+          padding: 8px;
+          border-radius: 12px;
+          font-size: 11px;
+        }
+
+        .metric-pill b {
+          font-size: 18px;
+        }
+
+        .map-body {
+          margin-top: 12px;
+        }
+
+        .focus-strip {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+
+        .focus-chip {
+          min-height: 48px;
+          padding: 10px;
+          border-radius: 12px;
+        }
+
+        .focus-chip strong {
+          font-size: 13px;
+        }
+
+        .focus-chip span {
+          font-size: 11px;
+        }
+
+        .flow-lane {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+          margin-top: 12px;
+        }
+
+        .station {
+          min-height: 142px;
+          padding: 12px;
+          border-radius: 16px;
+        }
+
+        .station-num {
+          width: 34px;
+          height: 34px;
+          font-size: 16px;
+        }
+
+        .station h3 {
+          margin-top: 10px;
+          font-size: 20px;
+        }
+
+        .station p {
+          margin-top: 8px;
+          font-size: 12px;
+          line-height: 1.38;
+        }
+
+        .app-tag {
+          min-height: 24px;
+          padding: 0 8px;
+          font-size: 11px;
+        }
+
+        .handoff-row {
+          grid-template-columns: 1fr;
+          gap: 8px;
+          margin-top: 12px;
+        }
+
+        .handoff-card {
+          min-height: 50px;
+          padding: 10px;
+          border-radius: 12px;
+        }
+
+        .handoff-card b {
+          font-size: 14px;
+        }
+
+        .handoff-card span {
+          font-size: 12px;
+          line-height: 1.32;
+        }
+
+        html,
+        body {
+          height: auto;
+          min-height: 0;
+          overflow: visible;
+        }
+
+        .artboard {
+          height: auto;
+          min-height: 0;
+          overflow: visible;
+          background:
+            radial-gradient(circle at 92% 92%, rgba(226, 235, 255, 0.58), transparent 32%),
+            linear-gradient(135deg, #fffdf8 0%, #fbf7ef 42%, #f5fbf7 100%);
+        }
+
+        .industry-local {
+          background:
+            radial-gradient(circle at 90% 88%, rgba(214, 245, 229, 0.6), transparent 32%),
+            linear-gradient(135deg, #fffdf8 0%, #fff2ee 43%, #f2fbf7 100%);
+        }
+
+        .stage,
+        .layout {
+          height: auto;
+          min-height: 0;
+          overflow: visible;
+        }
+
+        .stage::before {
+          opacity: 0.14;
+          background:
+            linear-gradient(90deg, rgba(20, 20, 20, 0.045) 1px, transparent 1px) 0 0 / 56px 56px,
+            linear-gradient(180deg, rgba(20, 20, 20, 0.04) 1px, transparent 1px) 0 0 / 56px 56px;
+        }
+
+        .layout {
+          gap: 30px;
+          padding: 30px 24px;
+        }
+
+        .summary {
+          gap: 20px;
+        }
+
+        .summary-kicker {
+          min-height: 38px;
+          gap: 10px;
+          padding: 8px 14px;
+          font-size: 15px;
+        }
+
+        .summary-kicker i {
+          width: 10px;
+          height: 10px;
+        }
+
+        h1 {
+          font-size: 34px;
+          line-height: 1.08;
+        }
+
+        .lede {
+          font-size: 19px;
+          line-height: 1.55;
+        }
+
+        .priority-card {
+          padding: 22px;
+          border-radius: 22px;
+        }
+
+        .priority-card::after {
+          right: -54px;
+          bottom: -66px;
+          width: 170px;
+          height: 170px;
+          border-width: 24px;
+        }
+
+        .priority-label,
+        .priority-close {
+          min-height: 34px;
+          padding: 6px 13px;
+          font-size: 15px;
+        }
+
+        .priority-card h2 {
+          margin-top: 18px;
+          font-size: 27px;
+          line-height: 1.14;
+        }
+
+        .priority-card p {
+          max-width: 360px;
+          margin-top: 12px;
+          font-size: 18px;
+          line-height: 1.5;
+        }
+
+        .priority-close {
+          margin-top: 18px;
+        }
+
+        .priority-close i {
+          width: 10px;
+          height: 10px;
+        }
+
+        .priority-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 10px;
+        }
+
+        .priority-tile {
+          min-height: 96px;
+          padding: 14px 12px;
+          border-radius: 16px;
+        }
+
+        .priority-tile b {
+          font-size: 20px;
+        }
+
+        .priority-tile span {
+          margin-top: 8px;
+          font-size: 14px;
+          line-height: 1.28;
+        }
+
+        .map-panel {
+          display: grid;
+          gap: 18px;
+          min-height: 0;
+          padding: 24px 20px 30px;
+          overflow: visible;
+          border-radius: 24px;
+        }
+
+        .map-panel::before {
+          display: none;
+        }
+
+        .map-head,
+        .focus-strip,
+        .flow-lane,
+        .handoff-row {
+          position: static;
+          left: auto;
+          right: auto;
+          top: auto;
+        }
+
+        .map-head {
+          display: grid;
+          gap: 16px;
+        }
+
+        .map-head h2 {
+          font-size: 28px;
+          line-height: 1.18;
+        }
+
+        .map-head p {
+          margin-top: 8px;
+          font-size: 16px;
+          line-height: 1.5;
+        }
+
+        .map-metric {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 10px;
+        }
+
+        .metric-pill {
+          min-width: 0;
+          min-height: 66px;
+          padding: 10px 8px;
+          border-radius: 14px;
+          font-size: 13px;
+          line-height: 1.2;
+        }
+
+        .metric-pill b {
+          margin-bottom: 5px;
+          font-size: 22px;
+        }
+
+        .map-body {
+          display: grid;
+          gap: 18px;
+          margin-top: 0;
+        }
+
+        .focus-strip {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        .focus-chip {
+          min-height: 76px;
+          padding: 15px 16px;
+          border-radius: 16px;
+        }
+
+        .focus-chip strong {
+          font-size: 20px;
+          line-height: 1.15;
+        }
+
+        .focus-chip span {
+          margin-top: 6px;
+          font-size: 15px;
+          line-height: 1.38;
+        }
+
+        .flow-lane {
+          grid-template-columns: 1fr;
+          gap: 12px;
+          min-height: 0;
+          margin-top: 0;
+        }
+
+        .flow-lane::before {
+          display: none;
+        }
+
+        .station {
+          grid-template-columns: 58px minmax(0, 1fr);
+          grid-template-rows: auto auto auto;
+          column-gap: 14px;
+          row-gap: 6px;
+          min-height: 0;
+          padding: 18px;
+          border-radius: 18px;
+        }
+
+        .station-num {
+          grid-row: 1 / span 3;
+          width: 52px;
+          height: 52px;
+          font-size: 21px;
+        }
+
+        .station h3 {
+          margin-top: 0;
+          font-size: 24px;
+          line-height: 1.14;
+        }
+
+        .station p {
+          margin-top: 0;
+          font-size: 16px;
+          line-height: 1.48;
+        }
+
+        .app-tag {
+          min-height: 30px;
+          padding: 4px 10px;
+          font-size: 15px;
+        }
+
+        .app-tag i {
+          width: 9px;
+          height: 9px;
+        }
+
+        .handoff-row {
+          grid-template-columns: 1fr;
+          gap: 10px;
+          margin-top: 0;
+        }
+
+        .handoff-card {
+          min-height: 76px;
+          padding: 16px;
+          border-radius: 16px;
+        }
+
+        .handoff-card b {
+          font-size: 21px;
+          line-height: 1.15;
+        }
+
+        .handoff-card span {
+          margin-top: 6px;
+          font-size: 16px;
+          line-height: 1.4;
+        }
+      }
+
+      @media (max-width: 430px) {
+        .layout {
+          padding: 30px 20px;
+        }
+
+        h1 {
+          font-size: 32px;
+        }
+
+        .lede {
+          font-size: 18px;
+        }
+
+        .priority-grid {
+          gap: 8px;
+        }
+
+        .priority-tile {
+          min-height: 88px;
+          padding: 12px 10px;
+        }
+
+        .priority-tile b {
+          font-size: 18px;
+        }
+
+        .priority-tile span {
+          font-size: 13px;
+        }
+
+        .map-panel {
+          padding: 22px 16px 30px;
+        }
+
+        .map-head h2 {
+          font-size: 25px;
+        }
+
+        .metric-pill {
+          min-height: 62px;
+          font-size: 12px;
+        }
+
+        .station {
+          grid-template-columns: 48px minmax(0, 1fr);
+          padding: 16px;
+        }
+
+        .station-num {
+          width: 44px;
+          height: 44px;
+          font-size: 19px;
+        }
+
+        .station h3 {
+          font-size: 22px;
+        }
+
+        .station p,
+        .handoff-card span {
+          font-size: 15px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section class="artboard industry-brand" id="industry-brand" data-export="brand">
+      <div class="stage">
+        <div class="layout">
+          <aside class="summary">
+            <div class="summary-kicker"><i></i><span>核心行业 01</span></div>
+            <h1><span>品牌工厂</span><span>与跨境电商</span></h1>
+            <p class="lede">不是先把所有流程都 AI 化，而是优先抓住最容易产生线索、最依赖跟进、最能复盘训练的一条增长链路。</p>
+            <div class="priority-card">
+              <span class="priority-label">优先 AI 化流程</span>
+              <h2>内容入口 + 招商跟进</h2>
+              <p>把市场信号转成内容素材，再把线索分层、推进和复盘。</p>
+              <span class="priority-close"><i></i>线索跟进和复盘进入训练</span>
+            </div>
+            <div class="priority-grid">
+              <div class="priority-tile"><b>高频</b><span>每天都有内容和线索动作</span></div>
+              <div class="priority-tile"><b>可复盘</b><span>能看见渠道与跟进结果</span></div>
+              <div class="priority-tile"><b>能训练</b><span>话术和打法可沉淀</span></div>
+            </div>
+          </aside>
+
+          <main class="map-panel">
+            <header class="map-head">
+              <div>
+                <h2>品牌与跨境先跑通：内容引流 + 招商跟进</h2>
+                <p>先让内容持续产生线索，再让每条线索都有下一步动作和复盘依据。</p>
+              </div>
+              <div class="map-metric" aria-hidden="true">
+                <span class="metric-pill"><b>1</b>核心链路</span>
+                <span class="metric-pill"><b>3</b>AI APP</span>
+                <span class="metric-pill"><b>7</b>天跟进</span>
+              </div>
+            </header>
+
+            <div class="map-body">
+              <div class="focus-strip">
+                <div class="focus-chip"><strong>为什么先做</strong><span>获客和招商都依赖稳定入口</span></div>
+                <div class="focus-chip"><strong>切入点</strong><span>从内容素材和线索分层开始</span></div>
+                <div class="focus-chip"><strong>交付目标</strong><span>把跟进动作变成可复盘流程</span></div>
+              </div>
+
+              <div class="flow-lane">
+                <article class="station">
+                  <span class="station-num">1</span>
+                  <h3>市场信号</h3>
+                  <p>竞品活动、渠道反馈和客户问题先进入增长诊断。</p>
+                  <span class="app-tag blue" style="--app:#3478f6"><i></i>增长诊断</span>
+                </article>
+                <article class="station key">
+                  <span class="station-num">2</span>
+                  <h3>内容入口</h3>
+                  <p>把新品卖点、场景价值和活动信息生成素材队列。</p>
+                  <span class="app-tag blue" style="--app:#3478f6"><i></i>AI 引流</span>
+                </article>
+                <article class="station key">
+                  <span class="station-num">3</span>
+                  <h3>招商跟进</h3>
+                  <p>线索分层、会后任务和异议处理都有清晰下一步。</p>
+                  <span class="app-tag green" style="--app:#20b978"><i></i>AI 招商</span>
+                </article>
+                <article class="station">
+                  <span class="station-num">4</span>
+                  <h3>复盘训练</h3>
+                  <p>有效话术、成交节奏和渠道反馈进入 Skill。</p>
+                  <span class="app-tag purple" style="--app:#8b5cf6"><i></i>AI 培训</span>
+                </article>
+              </div>
+
+              <div class="handoff-row">
+                <div class="handoff-card"><b>输入</b><span>市场信号、产品卖点、渠道反馈</span></div>
+                <div class="handoff-card"><b>AI 动作</b><span>生成内容、线索分层、跟进提醒</span></div>
+                <div class="handoff-card"><b>输出</b><span>发布队列、招商任务、训练题库</span></div>
+              </div>
+            </div>
+
+          </main>
+        </div>
+      </div>
+    </section>
+
+    <section class="artboard industry-local" id="industry-local" data-export="local">
+      <div class="stage">
+        <div class="layout">
+          <aside class="summary">
+            <div class="summary-kicker"><i></i><span>核心行业 02</span></div>
+            <h1><span>美业医美</span><span>与本地连锁</span></h1>
+            <p class="lede">不是先做一堆门店工具，而是先把客户状态和顾问动作沉淀下来，让复购、培训和复制都有依据。</p>
+            <div class="priority-card">
+              <span class="priority-label">优先 AI 化流程</span>
+              <h2>客户档案 + 私域复购</h2>
+              <p>把进站、咨询和建档连起来，再触发复购任务和门店训练。</p>
+              <span class="priority-close"><i></i>客户状态记录，任务触发，经验复制</span>
+            </div>
+            <div class="priority-grid">
+              <div class="priority-tile"><b>高频</b><span>每天都有咨询与回访</span></div>
+              <div class="priority-tile"><b>可追踪</b><span>客户状态能持续记录</span></div>
+              <div class="priority-tile"><b>可复制</b><span>优秀顾问动作可训练</span></div>
+            </div>
+          </aside>
+
+          <main class="map-panel">
+            <header class="map-head">
+              <div>
+                <h2>美业与连锁先跑通：客户档案 + 私域复购</h2>
+                <p>先让每个客户都有状态记录，再让每个门店都有可执行的跟进任务。</p>
+              </div>
+              <div class="map-metric" aria-hidden="true">
+                <span class="metric-pill"><b>1</b>核心链路</span>
+                <span class="metric-pill"><b>4</b>AI APP</span>
+                <span class="metric-pill"><b>30</b>天周期</span>
+              </div>
+            </header>
+
+            <div class="map-body">
+              <div class="focus-strip">
+                <div class="focus-chip"><strong>为什么先做</strong><span>门店增长依赖持续跟进</span></div>
+                <div class="focus-chip"><strong>切入点</strong><span>从客户档案和复购任务开始</span></div>
+                <div class="focus-chip"><strong>交付目标</strong><span>把总部经验变成门店动作</span></div>
+              </div>
+
+              <div class="flow-lane">
+                <article class="station">
+                  <span class="station-num">1</span>
+                  <h3>本地获客</h3>
+                  <p>本地内容、体验套餐和到店预约形成客户入口。</p>
+                  <span class="app-tag blue" style="--app:#3478f6"><i></i>AI 引流</span>
+                </article>
+                <article class="station">
+                  <span class="station-num">2</span>
+                  <h3>状态解释</h3>
+                  <p>AI 测肤、肤况解释和体验转卡形成顾问话术。</p>
+                  <span class="app-tag pink" style="--app:#ee8dae"><i></i>顾问话术</span>
+                </article>
+                <article class="station key">
+                  <span class="station-num">3</span>
+                  <h3>私域复购</h3>
+                  <p>Skin ID、客户分层和周期提醒触发复购任务。</p>
+                  <span class="app-tag orange" style="--app:#f29a3b"><i></i>AI 运营</span>
+                </article>
+                <article class="station key">
+                  <span class="station-num">4</span>
+                  <h3>门店复制</h3>
+                  <p>SOP 任务、店长日报和顾问陪练进入训练标准。</p>
+                  <span class="app-tag purple" style="--app:#8b5cf6"><i></i>AI 培训</span>
+                </article>
+              </div>
+
+              <div class="handoff-row">
+                <div class="handoff-card"><b>输入</b><span>客户状态、咨询记录、消费周期</span></div>
+                <div class="handoff-card"><b>AI 动作</b><span>分层建档、生成话术、触发回访</span></div>
+                <div class="handoff-card"><b>输出</b><span>复购任务、顾问训练、门店复盘</span></div>
+              </div>
+            </div>
+
+          </main>
+        </div>
+      </div>
+    </section>
+    <script>
+      (() => {
+        const fitArtboards = () => {
+          if (window.innerWidth <= 720) {
+            document.querySelectorAll(".artboard").forEach((artboard) => {
+              artboard.style.transform = "";
+            });
+            fitParentFrame();
+            return;
+          }
+          const scale = Math.min(window.innerWidth / 2360, window.innerHeight / 1320);
+          document.querySelectorAll(".artboard").forEach((artboard) => {
+            artboard.style.transform = `scale(${scale})`;
+          });
+          fitParentFrame();
+        };
+
+        const fitParentFrame = () => {
+          if (!window.frameElement) return;
+
+          const frameWrap = window.frameElement.closest(".industry-html-frame");
+          if (!frameWrap) return;
+
+          if (window.innerWidth > 720) {
+            frameWrap.style.removeProperty("height");
+            return;
+          }
+
+          requestAnimationFrame(() => {
+            const height = Math.ceil(document.documentElement.scrollHeight);
+            frameWrap.style.height = `${height}px`;
+          });
+        };
+
+        window.addEventListener("resize", fitArtboards);
+        fitArtboards();
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1124 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>product-overview-card-modules-6x5</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 2632px;
+        margin: 0;
+        overflow: visible;
+        background: #fbfaf7;
+        color: #111111;
+        font-family:
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          "PingFang SC",
+          "Microsoft YaHei",
+          "Noto Sans CJK SC",
+          Arial,
+          sans-serif;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      html::-webkit-scrollbar,
+      body::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+      }
+
+      body {
+        padding: 72px;
+      }
+
+      .sheet {
+        display: grid;
+        width: 2488px;
+        grid-template-columns: repeat(2, 1200px);
+        gap: 88px;
+      }
+
+      .module {
+        --accent: #2563eb;
+        --accent-dark: #1d4ed8;
+        --accent-rgb: 37, 99, 235;
+        position: relative;
+        width: 1200px;
+        height: 1000px;
+        overflow: hidden;
+        border: 1px solid rgba(22, 24, 28, 0.08);
+        border-radius: 46px;
+        background: var(--wash);
+        box-shadow: 0 32px 90px rgba(23, 28, 40, 0.13);
+        isolation: isolate;
+      }
+
+      .module::before,
+      .module::after {
+        position: absolute;
+        content: "";
+        pointer-events: none;
+      }
+
+      .module::before {
+        inset: 0;
+        opacity: 0.2;
+        background:
+          linear-gradient(90deg, rgba(255, 255, 255, 0.9) 1px, transparent 1px) 0 0 / 76px 76px,
+          linear-gradient(180deg, rgba(255, 255, 255, 0.86) 1px, transparent 1px) 0 0 / 76px 76px;
+      }
+
+      .module::after {
+        right: -210px;
+        bottom: -230px;
+        width: 620px;
+        height: 620px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.58);
+        filter: blur(28px);
+      }
+
+      .inner {
+        position: absolute;
+        inset: 34px;
+        z-index: 1;
+        display: grid;
+        grid-template-rows: 136px 1fr;
+        gap: 22px;
+      }
+
+      .head,
+      .board,
+      .block,
+      .pill,
+      .stat,
+      .chat,
+      .score-card {
+        border: 1px solid rgba(22, 24, 28, 0.08);
+        background: rgba(255, 255, 255, 0.88);
+        box-shadow: 0 24px 62px rgba(23, 28, 40, 0.11);
+      }
+
+      .head {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        align-items: center;
+        gap: 28px;
+        padding: 20px 30px;
+        border-radius: 34px;
+      }
+
+      .tag {
+        display: inline-flex;
+        min-width: 184px;
+        min-height: 70px;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        padding: 0 18px;
+        border-radius: 999px;
+        background: rgba(var(--accent-rgb), 0.13);
+        color: var(--accent-dark);
+        font-size: 40px;
+        font-weight: 950;
+        white-space: nowrap;
+      }
+
+      .tag::before {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--accent);
+        content: "";
+      }
+
+      .title strong {
+        display: block;
+        color: #111111;
+        font-size: 58px;
+        font-weight: 960;
+        letter-spacing: 0;
+        line-height: 1;
+      }
+
+      .title small {
+        display: block;
+        margin-top: 10px;
+        color: #4f5968;
+        font-size: 34px;
+        font-weight: 830;
+        letter-spacing: 0;
+        line-height: 1.15;
+      }
+
+      .board {
+        position: relative;
+        overflow: hidden;
+        padding: 30px;
+        border-radius: 36px;
+        background: rgba(255, 255, 255, 0.78);
+      }
+
+      .board::before {
+        position: absolute;
+        inset: 18px;
+        border: 1px solid rgba(var(--accent-rgb), 0.12);
+        border-radius: 28px;
+        content: "";
+        pointer-events: none;
+      }
+
+      .board-grid {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        height: 100%;
+        gap: 22px;
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 68px;
+      }
+
+      .section-title strong {
+        font-size: 48px;
+        font-weight: 960;
+        line-height: 1;
+      }
+
+      .section-title span {
+        display: inline-flex;
+        min-height: 58px;
+        align-items: center;
+        padding: 0 28px;
+        border-radius: 999px;
+        background: rgba(var(--accent-rgb), 0.12);
+        color: var(--accent-dark);
+        font-size: 38px;
+        font-weight: 950;
+        white-space: nowrap;
+      }
+
+      .block {
+        display: grid;
+        align-content: center;
+        min-height: 128px;
+        padding: 24px 28px;
+        border-radius: 26px;
+      }
+
+      .block b {
+        color: #111111;
+        font-size: 38px;
+        font-weight: 950;
+        line-height: 1.06;
+      }
+
+      .block span,
+      .block p {
+        margin: 8px 0 0;
+        color: #536071;
+        font-size: 31px;
+        font-weight: 780;
+        line-height: 1.2;
+      }
+
+      .arrow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent-dark);
+        font-size: 48px;
+        font-weight: 950;
+      }
+
+      .logo-row {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .logo-card {
+        display: grid;
+        min-height: 164px;
+        justify-items: center;
+        align-content: center;
+        gap: 12px;
+        border: 1px solid rgba(22, 24, 28, 0.07);
+        border-radius: 26px;
+        background: #ffffff;
+        box-shadow: 0 18px 44px rgba(23, 28, 40, 0.08);
+      }
+
+      .logo-card svg {
+        display: block;
+        width: 76px;
+        height: 76px;
+      }
+
+      .logo-card span {
+        color: #2f3845;
+        font-size: 31px;
+        font-weight: 930;
+      }
+
+      .growth-flow {
+        display: grid;
+        grid-template-columns: 1fr 58px 1fr 58px 1fr;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .dark-strip {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        min-height: 94px;
+        padding: 16px;
+        border-radius: 26px;
+        background: #111111;
+      }
+
+      .dark-strip span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        border-radius: 999px;
+        background: #292929;
+        color: #ffffff;
+        font-size: 40px;
+        font-weight: 960;
+      }
+
+      .fran-main {
+        display: grid;
+        grid-template-columns: 0.78fr 1.08fr 0.72fr;
+        gap: 22px;
+        min-height: 0;
+      }
+
+      .score-big {
+        display: grid;
+        place-items: center;
+        min-height: 280px;
+        border-radius: 30px;
+        background:
+          radial-gradient(circle at center, #ffffff 0 50%, transparent 51%),
+          conic-gradient(var(--accent) 0 82%, rgba(var(--accent-rgb), 0.15) 82% 100%);
+        color: var(--accent-dark);
+        font-size: 96px;
+        font-weight: 960;
+        box-shadow: inset 0 0 0 34px rgba(255, 255, 255, 0.6);
+      }
+
+      .lane-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .lane {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 16px;
+        min-height: 82px;
+        padding: 0 22px;
+        border: 1px solid rgba(22, 24, 28, 0.07);
+        border-radius: 22px;
+        background: #ffffff;
+        box-shadow: 0 16px 42px rgba(23, 28, 40, 0.08);
+      }
+
+      .lane i {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+
+      .lane strong {
+        color: #111111;
+        font-size: 32px;
+        font-weight: 940;
+      }
+
+      .lane span {
+        display: inline-flex;
+        min-width: 84px;
+        min-height: 40px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        background: rgba(var(--accent-rgb), 0.12);
+        color: var(--accent-dark);
+        font-size: 27px;
+        font-weight: 930;
+      }
+
+      .right-stack {
+        display: grid;
+        gap: 16px;
+      }
+
+      .pill {
+        display: grid;
+        place-items: center;
+        min-height: 132px;
+        border-radius: 26px;
+        color: var(--accent-dark);
+        font-size: 36px;
+        font-weight: 950;
+      }
+
+      .ops-main {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 22px;
+      }
+
+      .message-stack {
+        display: grid;
+        gap: 14px;
+      }
+
+      .chat {
+        min-height: 96px;
+        padding: 20px 24px;
+        border-radius: 24px;
+      }
+
+      .chat b {
+        display: block;
+        color: #111111;
+        font-size: 32px;
+        line-height: 1.05;
+      }
+
+      .chat span {
+        display: block;
+        margin-top: 8px;
+        color: #536071;
+        font-size: 28px;
+        font-weight: 800;
+      }
+
+      .sop-panel {
+        display: grid;
+        gap: 18px;
+      }
+
+      .sop-flow {
+        display: grid;
+        grid-template-columns: 1fr 34px 1fr 34px 1fr;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .sop-node {
+        display: grid;
+        min-height: 136px;
+        place-items: center;
+        border-radius: 26px;
+        background: rgba(var(--accent-rgb), 0.12);
+        color: var(--accent-dark);
+        font-size: 32px;
+        font-weight: 950;
+        text-align: center;
+      }
+
+      .metric-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .stat {
+        display: grid;
+        min-height: 130px;
+        place-items: center;
+        border-radius: 24px;
+      }
+
+      .stat b {
+        color: var(--accent-dark);
+        font-size: 40px;
+        font-weight: 960;
+        line-height: 1;
+      }
+
+      .stat span {
+        color: #536071;
+        font-size: 28px;
+        font-weight: 860;
+      }
+
+      .train-main {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 22px;
+      }
+
+      .scenario {
+        display: grid;
+        gap: 16px;
+      }
+
+      .scenario-title {
+        display: inline-flex;
+        min-height: 56px;
+        align-items: center;
+        padding: 0 20px;
+        border-radius: 999px;
+        background: rgba(var(--accent-rgb), 0.12);
+        color: var(--accent-dark);
+        font-size: 36px;
+        font-weight: 950;
+        width: max-content;
+      }
+
+      .role-card {
+        display: grid;
+        min-height: 130px;
+        align-content: center;
+        padding: 24px;
+        border-radius: 26px;
+        background: #ffffff;
+        box-shadow: 0 18px 46px rgba(23, 28, 40, 0.08);
+      }
+
+      .role-card b {
+        color: #111111;
+        font-size: 34px;
+        font-weight: 950;
+      }
+
+      .role-card span {
+        margin-top: 8px;
+        color: #536071;
+        font-size: 29px;
+        font-weight: 800;
+      }
+
+      .score-card {
+        display: grid;
+        place-items: center;
+        min-height: 286px;
+        border-radius: 30px;
+      }
+
+      .score-ring {
+        display: inline-flex;
+        width: 190px;
+        height: 190px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background:
+          radial-gradient(circle at center, #ffffff 0 50%, transparent 51%),
+          conic-gradient(var(--accent) 0 86%, rgba(var(--accent-rgb), 0.15) 86% 100%);
+        color: var(--accent-dark);
+        font-size: 70px;
+        font-weight: 960;
+      }
+
+      .score-card span {
+        color: #111111;
+        font-size: 34px;
+        font-weight: 950;
+      }
+
+      .tag-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .tag-row span {
+        display: inline-flex;
+        min-height: 82px;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        border-radius: 24px;
+        background: rgba(var(--accent-rgb), 0.12);
+        color: var(--accent-dark);
+        font-size: 40px;
+        font-weight: 960;
+      }
+
+      .growth {
+        --accent: #2563eb;
+        --accent-dark: #1d4ed8;
+        --accent-rgb: 37, 99, 235;
+        --wash:
+          radial-gradient(circle at 13% 12%, rgba(255, 255, 255, 0.72) 0 13%, transparent 14%),
+          linear-gradient(135deg, #dfe8ff 0%, #f4f8ff 52%, #dcf8ee 100%);
+      }
+
+      .fran {
+        --accent: #10b981;
+        --accent-dark: #047857;
+        --accent-rgb: 16, 185, 129;
+        --wash:
+          radial-gradient(circle at 13% 12%, rgba(255, 255, 255, 0.72) 0 13%, transparent 14%),
+          linear-gradient(135deg, #dff6ed 0%, #f7fbf2 52%, #e4ecff 100%);
+      }
+
+      .ops {
+        --accent: #f97316;
+        --accent-dark: #c2410c;
+        --accent-rgb: 249, 115, 22;
+        --wash:
+          radial-gradient(circle at 13% 12%, rgba(255, 255, 255, 0.72) 0 13%, transparent 14%),
+          linear-gradient(135deg, #ffe4cc 0%, #fff7ef 52%, #e2f7f0 100%);
+      }
+
+      .train {
+        --accent: #8b5cf6;
+        --accent-dark: #6d28d9;
+        --accent-rgb: 139, 92, 246;
+        --wash:
+          radial-gradient(circle at 13% 12%, rgba(255, 255, 255, 0.72) 0 13%, transparent 14%),
+          linear-gradient(135deg, #efe5ff 0%, #fbf5ff 52%, #e2f7f0 100%);
+      }
+    </style>
+    <style>
+      html,
+      body {
+        width: 1200px;
+        height: 1000px;
+        overflow: hidden;
+        background: transparent;
+      }
+
+      body {
+        padding: 0;
+      }
+
+      .sheet {
+        display: block;
+        width: 1200px;
+      }
+
+      .module {
+        display: none;
+        transform-origin: top left;
+      }
+
+      .module.is-active {
+        display: block;
+      }
+
+    </style>
+    <style id="product-overview-mobile-styles" media="not all">
+        html,
+        body {
+          width: 100%;
+          height: auto;
+          min-height: 0;
+          overflow: hidden;
+        }
+
+        .sheet {
+          width: 100%;
+        }
+
+        .module.is-active {
+          width: 100%;
+          height: auto;
+          min-height: 0;
+          padding: 10px 16px;
+          border-radius: 22px;
+          box-shadow: none;
+        }
+
+        .inner {
+          position: relative;
+          inset: auto;
+          display: grid;
+          gap: 16px;
+          grid-template-rows: auto auto;
+        }
+
+        .head {
+          grid-template-columns: 1fr;
+          gap: 10px;
+          padding: 14px;
+          border-radius: 16px;
+        }
+
+        .tag {
+          width: max-content;
+          min-width: 0;
+          min-height: 30px;
+          gap: 7px;
+          padding: 0 11px;
+          font-size: 14px;
+        }
+
+        .tag::before {
+          width: 7px;
+          height: 7px;
+        }
+
+        .title strong {
+          font-size: 26px;
+          line-height: 1.08;
+        }
+
+        .title small {
+          margin-top: 7px;
+          font-size: 15px;
+          line-height: 1.35;
+        }
+
+        .board {
+          padding: 14px;
+          border-radius: 18px;
+        }
+
+        .board::before {
+          inset: 7px;
+          border-radius: 14px;
+        }
+
+        .board-grid {
+          height: auto;
+          gap: 12px;
+        }
+
+        .section-title {
+          min-height: 30px;
+          gap: 8px;
+        }
+
+        .section-title strong {
+          font-size: 21px;
+          line-height: 1.12;
+        }
+
+        .section-title span {
+          min-height: 28px;
+          padding: 0 10px;
+          font-size: 12px;
+        }
+
+        .block {
+          min-height: 62px;
+          padding: 11px 13px;
+          border-radius: 14px;
+        }
+
+        .block b {
+          font-size: 17px;
+          line-height: 1.1;
+        }
+
+        .block span,
+        .block p {
+          margin-top: 5px;
+          font-size: 13px;
+          line-height: 1.35;
+        }
+
+        .logo-row {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+        }
+
+        .logo-card {
+          min-height: 78px;
+          gap: 5px;
+          border-radius: 14px;
+        }
+
+        .logo-card svg {
+          width: 34px;
+          height: 34px;
+        }
+
+        .logo-card span {
+          font-size: 14px;
+        }
+
+        .growth-flow {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+
+        .growth-flow .arrow {
+          display: none;
+        }
+
+        .dark-strip {
+          gap: 6px;
+          min-height: 0;
+          padding: 7px;
+          border-radius: 14px;
+        }
+
+        .dark-strip span {
+          min-height: 34px;
+          font-size: 14px;
+          line-height: 1.1;
+          text-align: center;
+        }
+
+        .fran-main {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        .score-big {
+          min-height: 96px;
+          font-size: 42px;
+          box-shadow: inset 0 0 0 16px rgba(255, 255, 255, 0.6);
+        }
+
+        .lane-list {
+          gap: 7px;
+        }
+
+        .lane {
+          min-height: 48px;
+          gap: 9px;
+          padding: 0 12px;
+          border-radius: 14px;
+        }
+
+        .lane i {
+          width: 10px;
+          height: 10px;
+        }
+
+        .lane strong {
+          font-size: 15px;
+        }
+
+        .lane span {
+          min-width: 48px;
+          min-height: 24px;
+          font-size: 12px;
+        }
+
+        .right-stack {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+        }
+
+        .pill {
+          min-height: 48px;
+          border-radius: 14px;
+          font-size: 15px;
+        }
+
+        .ops-main {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        .message-stack {
+          gap: 7px;
+        }
+
+        .chat {
+          min-height: 58px;
+          padding: 11px 12px;
+          border-radius: 14px;
+        }
+
+        .chat b {
+          font-size: 15px;
+        }
+
+        .chat span {
+          margin-top: 5px;
+          font-size: 13px;
+        }
+
+        .sop-panel {
+          gap: 8px;
+        }
+
+        .sop-flow {
+          gap: 6px;
+          grid-template-columns: 1fr 18px 1fr 18px 1fr;
+        }
+
+        .sop-flow .arrow {
+          font-size: 18px;
+        }
+
+        .sop-node {
+          min-height: 64px;
+          border-radius: 14px;
+          font-size: 14px;
+        }
+
+        .metric-row {
+          gap: 7px;
+        }
+
+        .stat {
+          min-height: 62px;
+          border-radius: 14px;
+        }
+
+        .stat b {
+          font-size: 19px;
+        }
+
+        .stat span {
+          font-size: 12px;
+        }
+
+        .train-main {
+          grid-template-columns: 1fr;
+          gap: 9px;
+        }
+
+        .scenario {
+          gap: 7px;
+        }
+
+        .scenario-title {
+          min-height: 30px;
+          padding: 0 10px;
+          font-size: 14px;
+        }
+
+        .role-card {
+          min-height: 58px;
+          padding: 11px 12px;
+          border-radius: 14px;
+        }
+
+        .role-card b {
+          font-size: 15px;
+        }
+
+        .role-card span {
+          margin-top: 5px;
+          font-size: 13px;
+          line-height: 1.35;
+        }
+
+        .score-card {
+          min-height: 150px;
+          border-radius: 16px;
+        }
+
+        .score-ring {
+          width: 92px;
+          height: 92px;
+          font-size: 36px;
+        }
+
+        .score-card span {
+          font-size: 16px;
+        }
+
+        .tag-row {
+          gap: 7px;
+        }
+
+        .tag-row span {
+          min-height: 42px;
+          border-radius: 14px;
+          font-size: 14px;
+        }
+    </style>
+  </head>
+  <body>
+    <main class="sheet" data-export="product-overview-card-sheet">
+      <section class="module growth" data-export="product-overview-growth">
+        <div class="inner">
+          <div class="head">
+            <span class="tag">AI 引流</span>
+            <div class="title">
+              <strong>增长作战台</strong>
+              <small>从投放矩阵到账号群发布</small>
+            </div>
+          </div>
+          <div class="board">
+            <div class="board-grid">
+              <div class="section-title"><strong>多渠道发布</strong><span>Agent 执行</span></div>
+              <div class="logo-row" aria-label="账号群发布渠道图标">
+                <div class="logo-card">
+                  <svg viewBox="0 0 64 64" role="img" aria-label="抖音"><rect width="64" height="64" rx="18" fill="#111111" /><path d="M38 13v27.8c0 8.1-5.7 13.4-13.2 13.4-6.5 0-11.8-4.3-11.8-10.2 0-6.5 5.9-10.7 13.8-9.8v8.7c-2.8-.9-5.1.3-5.1 2.2 0 1.7 1.6 2.9 3.8 2.9 3.2 0 5.2-2.3 5.2-6.2V13h7.3Z" fill="#ffffff" /><path d="M37.8 13c1.2 7.4 5.6 11.8 12.9 12.6v7.6c-5-.2-9.4-1.8-12.9-4.8V13Z" fill="#25f4ee" /><path d="M41 17.4c1.7 4.2 5 6.5 10.2 7v5.7c-3.9-.1-7.2-1.3-10.2-3.6v-9.1Z" fill="#fe2c55" opacity=".9" /></svg>
+                  <span>抖音</span>
+                </div>
+                <div class="logo-card">
+                  <svg viewBox="0 0 64 64" role="img" aria-label="公众号"><rect width="64" height="64" rx="18" fill="#10b981" /><path d="M27 22c-8.1 0-14.7 5.4-14.7 12.1 0 3.8 2.1 7.1 5.4 9.4l-1.5 5.6 6.1-3.1c1.5.4 3.1.5 4.7.5 8.1 0 14.7-5.4 14.7-12.1S35.1 22 27 22Z" fill="#ffffff" /><path d="M41 16.8c-7.4 0-13.4 4.8-13.4 10.8 0 6 6 10.8 13.4 10.8 1.4 0 2.7-.2 4-.5l5.3 2.7-1.3-4.8c3.1-2 5.1-4.9 5.1-8.2 0-6-5.7-10.8-13.1-10.8Z" fill="#dffaf0" /></svg>
+                  <span>公众号</span>
+                </div>
+                <div class="logo-card">
+                  <svg viewBox="0 0 64 64" role="img" aria-label="小红书"><rect width="64" height="64" rx="18" fill="#ff2442" /><text x="32" y="30" text-anchor="middle" fill="#fff" font-size="16" font-weight="900" font-family="Arial, sans-serif">小红</text><text x="32" y="48" text-anchor="middle" fill="#fff" font-size="16" font-weight="900" font-family="Arial, sans-serif">书</text></svg>
+                  <span>小红书</span>
+                </div>
+                <div class="logo-card">
+                  <svg viewBox="0 0 64 64" role="img" aria-label="视频号"><rect width="64" height="64" rx="18" fill="#f2fbf7" /><path d="M20.5 21.5c6.5-7 17.1-7 23.5 0 5.8 6.2 5.8 15.9 0 22.1-6.5 7-17.1 7-23.5 0-5.8-6.2-5.8-15.9 0-22.1Z" fill="none" stroke="#07c160" stroke-width="5.5" /><path d="M29 24.5v15l13-7.5-13-7.5Z" fill="#07c160" /></svg>
+                  <span>视频号</span>
+                </div>
+              </div>
+              <div class="growth-flow">
+                <div class="block"><b>预算 ROI</b><span>渠道判断</span></div>
+                <div class="arrow">→</div>
+                <div class="block"><b>素材包</b><span>文案 封面 短视频</span></div>
+                <div class="arrow">→</div>
+                <div class="block"><b>发布回流</b><span>线索进入资产池</span></div>
+              </div>
+              <div class="dark-strip"><span>投放矩阵</span><span>自动排期</span><span>复盘优化</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="module fran" data-export="product-overview-fran">
+        <div class="inner">
+          <div class="head">
+            <span class="tag">AI 招商</span>
+            <div class="title">
+              <strong>签约推进系统</strong>
+              <small>从线索经营到招商审批</small>
+            </div>
+          </div>
+          <div class="board">
+            <div class="board-grid">
+              <div class="section-title"><strong>高潜线索推进</strong><span>Skill 判断</span></div>
+              <div class="fran-main">
+                <div class="score-big">82</div>
+                <div class="lane-list">
+                  <div class="lane"><i></i><strong>线索评分</strong><span>A 级</span></div>
+                  <div class="lane"><i></i><strong>说明会邀约</strong><span>已约</span></div>
+                  <div class="lane"><i></i><strong>招商审批</strong><span>确认</span></div>
+                  <div class="lane"><i></i><strong>CRM 留痕</strong><span>回写</span></div>
+                </div>
+                <div class="right-stack">
+                  <div class="pill">资料包</div>
+                  <div class="pill">合同确认</div>
+                </div>
+              </div>
+              <div class="dark-strip"><span>客户标签</span><span>跟进节奏</span><span>签约复盘</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="module ops" data-export="product-overview-ops">
+        <div class="inner">
+          <div class="head">
+            <span class="tag">AI 运营</span>
+            <div class="title">
+              <strong>运营中枢</strong>
+              <small>从客户消息到 SOP 执行</small>
+            </div>
+          </div>
+          <div class="board">
+            <div class="board-grid">
+              <div class="section-title"><strong>每日任务执行</strong><span>Agent 复盘</span></div>
+              <div class="ops-main">
+                <div class="message-stack">
+                  <div class="chat"><b>客户消息</b><span>咨询、到店、复购提醒</span></div>
+                  <div class="chat"><b>运营日历</b><span>今日任务自动排队</span></div>
+                  <div class="chat"><b>审批确认</b><span>异常任务进入复核</span></div>
+                </div>
+                <div class="sop-panel">
+                  <div class="sop-flow">
+                    <div class="sop-node">客户<br />分层</div>
+                    <div class="arrow">→</div>
+                    <div class="sop-node">SOP<br />执行</div>
+                    <div class="arrow">→</div>
+                    <div class="sop-node">复盘<br />回写</div>
+                  </div>
+                  <div class="metric-row">
+                    <div class="stat"><b>92%</b><span>完成</span></div>
+                    <div class="stat"><b>+18</b><span>转化</span></div>
+                    <div class="stat"><b>34%</b><span>复购</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="dark-strip"><span>任务队列</span><span>SOP 模板</span><span>效果指标</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="module train" data-export="product-overview-train">
+        <div class="inner">
+          <div class="head">
+            <span class="tag">AI 培训</span>
+            <div class="title">
+              <strong>能力复制台</strong>
+              <small>从训练任务到实战陪练</small>
+            </div>
+          </div>
+          <div class="board">
+            <div class="board-grid">
+              <div class="section-title"><strong>场景陪练评分</strong><span>Skill 复制</span></div>
+              <div class="train-main">
+                <div class="scenario">
+                  <span class="scenario-title">体验转卡场景</span>
+                  <div class="role-card"><b>客户犹豫办卡</b><span>“体验不错，但我还想再考虑。”</span></div>
+                  <div class="role-card"><b>顾问回应训练</b><span>结合档案、周期计划和复购话术。</span></div>
+                </div>
+                <div class="score-card">
+                  <div class="score-ring">86</div>
+                  <span>场景评分</span>
+                </div>
+              </div>
+              <div class="tag-row"><span>话术纠偏</span><span>SOP 补训</span><span>标杆复制</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script>
+      (() => {
+        const moduleName = new URLSearchParams(window.location.search).get("module") || "growth";
+        const modules = Array.from(document.querySelectorAll(".module"));
+        const active = document.querySelector(`.module.${moduleName}`) || modules[0];
+        const mobileStyles = document.querySelector("#product-overview-mobile-styles");
+        if (!active) return;
+
+        modules.forEach((module) => module.classList.toggle("is-active", module === active));
+
+        const fitFrame = () => {
+          const pageWidth = window.top === window ? window.innerWidth : window.top.innerWidth;
+          const mobile = pageWidth <= 820;
+          const media = mobile ? "all" : "not all";
+          const transform = mobile ? "" : `scale(${window.innerWidth / 1200})`;
+          if (mobileStyles.media !== media) mobileStyles.media = media;
+          if (active.style.transform !== transform) active.style.transform = transform;
+          const height = mobile ? Math.ceil(active.getBoundingClientRect().height) : Math.ceil((window.innerWidth / 1200) * 1000);
+          const frameHeight = `${height}px`;
+          if (document.documentElement.style.height !== frameHeight) document.documentElement.style.height = frameHeight;
+          if (document.body.style.height !== frameHeight) document.body.style.height = frameHeight;
+
+          if (window.frameElement) {
+            const aspectRatio = mobile ? "auto" : "6 / 5";
+            if (window.frameElement.style.height !== frameHeight) window.frameElement.style.height = frameHeight;
+            if (window.frameElement.style.aspectRatio !== aspectRatio) window.frameElement.style.aspectRatio = aspectRatio;
+          }
+        };
+
+        window.addEventListener("resize", fitFrame);
+        new ResizeObserver(fitFrame).observe(active);
+        fitFrame();
+      })();
+    </script>
+  </body>
+</html>

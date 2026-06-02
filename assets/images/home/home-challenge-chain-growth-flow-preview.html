@@ -1,0 +1,1176 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>home-challenge-growth-flows-v3-readability-preview</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        background: #fffdf8;
+        color: #111;
+        font-family:
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          "PingFang SC",
+          "Microsoft YaHei",
+          "Noto Sans CJK SC",
+          Arial,
+          sans-serif;
+      }
+
+      body {
+        display: grid;
+        gap: 40px;
+        padding: 40px;
+      }
+
+      .artboard {
+        width: 2360px;
+        height: 1320px;
+        overflow: hidden;
+      }
+
+      .factory.artboard {
+        background: #dfe8ff;
+      }
+
+      .chain.artboard {
+        background: #dff7e9;
+      }
+
+      .stage {
+        position: relative;
+        width: 2320px;
+        height: 1252px;
+        margin: 34px 20px;
+        overflow: hidden;
+        border-radius: 62px;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .factory .stage {
+        background: transparent;
+      }
+
+      .chain .stage {
+        background: transparent;
+      }
+
+      .stage::before {
+        position: absolute;
+        inset: 0;
+        opacity: 0.3;
+        background:
+          radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.62) 0 14%, transparent 15%),
+          linear-gradient(135deg, transparent 0 43%, rgba(255, 255, 255, 0.38) 44% 45%, transparent 46%),
+          linear-gradient(35deg, transparent 0 62%, rgba(255, 255, 255, 0.26) 63% 64%, transparent 65%);
+        content: "";
+      }
+
+      .header {
+        position: absolute;
+        top: 112px;
+        left: 116px;
+        right: 116px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 36px;
+        align-items: start;
+      }
+
+      .subtitle {
+        max-width: 1780px;
+        margin: 0;
+        color: #2f3c4c;
+        font-size: 36px;
+        font-weight: 650;
+        line-height: 1.25;
+        text-align: left;
+        white-space: nowrap;
+      }
+
+      .board {
+        position: absolute;
+        left: 116px;
+        right: 116px;
+        top: 248px;
+        height: 790px;
+        display: grid;
+        grid-template-columns: 1fr 450px;
+        gap: 32px;
+        padding: 40px;
+        border: 1px solid rgba(24, 24, 24, 0.06);
+        border-radius: 40px;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 28px 86px rgba(37, 32, 24, 0.12);
+      }
+
+      .map {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        min-width: 0;
+        gap: 28px;
+      }
+
+      .map-head,
+      .ai-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .map-head h2,
+      .ai-head h2,
+      .diagnosis h2 {
+        margin: 0;
+        font-size: 36px;
+        line-height: 1.16;
+      }
+
+      .map-head span,
+      .ai-head span {
+        color: #66717f;
+        font-size: 22px;
+        font-weight: 700;
+      }
+
+      .process {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 22px;
+      }
+
+      .process::before {
+        position: absolute;
+        top: 132px;
+        left: 9%;
+        right: 9%;
+        height: 2px;
+        border-top: 2px dashed #c7d0dc;
+        content: "";
+      }
+
+      .node {
+        position: relative;
+        min-height: 330px;
+        padding: 34px 28px;
+        border: 1px solid #ebe7df;
+        border-radius: 28px;
+        background: #fffdf8;
+      }
+
+      .node::after {
+        position: absolute;
+        top: 110px;
+        right: -31px;
+        z-index: 3;
+        width: 46px;
+        height: 46px;
+        display: grid;
+        place-items: center;
+        border-radius: 999px;
+        background: #fff;
+        color: #c35d2b;
+        font-size: 17px;
+        font-weight: 850;
+        box-shadow: 0 8px 24px rgba(37, 32, 24, 0.12);
+        content: "断";
+      }
+
+      .node:last-child::after {
+        display: none;
+      }
+
+      .node small {
+        display: block;
+        color: #7a8593;
+        font-size: 20px;
+        font-weight: 750;
+      }
+
+      .node b {
+        display: block;
+        margin-top: 18px;
+        font-size: 34px;
+        line-height: 1.1;
+      }
+
+      .pain {
+        display: inline-flex;
+        margin-top: 24px;
+        padding: 11px 14px;
+        border-radius: 999px;
+        background: #fff2e8;
+        color: #b45222;
+        font-size: 21px;
+        font-weight: 800;
+      }
+
+      .node p {
+        margin: 24px 0 0;
+        color: #5f6974;
+        font-size: 20px;
+        line-height: 1.46;
+      }
+
+      .ai-layer {
+        padding: 26px 28px 30px;
+        border: 1px solid #ebe7df;
+        border-radius: 28px;
+        background: #f9faf8;
+      }
+
+      .ai-head {
+        margin-bottom: 22px;
+      }
+
+      .entry-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+      }
+
+      .entry {
+        min-height: 104px;
+        padding: 22px 22px;
+        border-radius: 20px;
+        background: #fff;
+        border: 1px solid #ebe7df;
+      }
+
+      .entry strong {
+        display: block;
+        font-size: 24px;
+      }
+
+      .entry span {
+        display: block;
+        margin-top: 11px;
+        color: #10a465;
+        font-size: 18px;
+        font-weight: 760;
+      }
+
+      .diagnosis {
+        display: grid;
+        align-content: start;
+        gap: 28px;
+        padding: 36px 34px;
+        border-radius: 32px;
+        background: #111;
+        color: #fff;
+      }
+
+      .diagnosis p {
+        margin: 0;
+        color: #c6d2df;
+        font-size: 22px;
+        line-height: 1.46;
+      }
+
+      .stat-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+        margin-top: 2px;
+      }
+
+      .stat {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 16px;
+        align-items: center;
+        min-height: 76px;
+        padding: 16px 20px;
+        border: 1px solid rgba(255, 255, 255, 0.13);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .stat span {
+        color: #b9c7d8;
+        font-size: 20px;
+      }
+
+      .stat strong {
+        font-size: 34px;
+      }
+
+      .diagnosis .accent {
+        color: #16d879;
+        font-weight: 800;
+      }
+
+      .principle {
+        position: absolute;
+        left: 270px;
+        right: 270px;
+        bottom: 88px;
+        display: grid;
+        grid-template-columns: auto 1fr auto 1fr auto;
+        align-items: center;
+        gap: 22px;
+      }
+
+      .flow-node {
+        display: inline-grid;
+        grid-template-columns: 52px auto;
+        align-items: center;
+        gap: 16px;
+        color: #273241;
+        font-size: 24px;
+        font-weight: 780;
+        white-space: nowrap;
+      }
+
+      .flow-node i {
+        display: grid;
+        place-items: center;
+        width: 52px;
+        height: 52px;
+        border-radius: 999px;
+        background: #263548;
+        color: #fff;
+        font-size: 21px;
+        font-style: normal;
+      }
+
+      .flow-arrow {
+        position: relative;
+        height: 2px;
+        background: rgba(38, 53, 72, 0.34);
+      }
+
+      .flow-arrow::after {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        width: 12px;
+        height: 12px;
+        border-top: 2px solid rgba(38, 53, 72, 0.44);
+        border-right: 2px solid rgba(38, 53, 72, 0.44);
+        transform: translateY(-50%) rotate(45deg);
+        content: "";
+      }
+
+      /* v3 readability preview: match the approved homepage Hero font scale. */
+      .header {
+        top: 98px;
+      }
+
+      .subtitle {
+        max-width: 2100px;
+        font-size: 42px;
+        line-height: 1.22;
+      }
+
+      .board {
+        top: 232px;
+        height: 828px;
+        grid-template-columns: minmax(0, 1fr) 500px;
+        gap: 34px;
+        padding: 38px;
+      }
+
+      .map {
+        gap: 26px;
+      }
+
+      .map-head h2,
+      .diagnosis h2 {
+        font-size: 46px;
+      }
+
+      .ai-head h2 {
+        font-size: 40px;
+      }
+
+      .map-head span,
+      .ai-head span {
+        font-size: 24px;
+      }
+
+      .process {
+        gap: 20px;
+      }
+
+      .process::before {
+        top: 144px;
+      }
+
+      .node {
+        min-height: 366px;
+        padding: 34px 25px;
+      }
+
+      .node::after {
+        top: 122px;
+        right: -29px;
+        width: 44px;
+        height: 44px;
+        font-size: 18px;
+      }
+
+      .node small {
+        font-size: 22px;
+      }
+
+      .node b {
+        margin-top: 18px;
+        font-size: 36px;
+      }
+
+      .pain {
+        margin-top: 24px;
+        padding: 12px 15px;
+        font-size: 22px;
+      }
+
+      .node p {
+        margin-top: 24px;
+        font-size: 26px;
+        line-height: 1.35;
+      }
+
+      .ai-layer {
+        padding: 30px 30px 32px;
+      }
+
+      .entry {
+        min-height: 122px;
+        padding: 24px 20px;
+      }
+
+      .entry strong {
+        font-size: 28px;
+        line-height: 1.2;
+      }
+
+      .entry span {
+        margin-top: 12px;
+        font-size: 24px;
+        line-height: 1.2;
+      }
+
+      .diagnosis {
+        gap: 28px;
+        padding: 38px 36px;
+      }
+
+      .diagnosis p {
+        font-size: 28px;
+        line-height: 1.38;
+      }
+
+      .stat-grid {
+        gap: 16px;
+      }
+
+      .stat {
+        min-height: 92px;
+        padding: 17px 22px;
+      }
+
+      .stat span {
+        font-size: 26px;
+      }
+
+      .stat strong {
+        font-size: 42px;
+      }
+
+      .principle {
+        left: 238px;
+        right: 238px;
+        bottom: 78px;
+      }
+
+      .flow-node {
+        grid-template-columns: 58px auto;
+        gap: 18px;
+        font-size: 28px;
+      }
+
+      .flow-node i {
+        width: 58px;
+        height: 58px;
+        font-size: 23px;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        margin: 0;
+        overflow: hidden;
+        background: transparent;
+      }
+
+      body {
+        display: block;
+        padding: 0;
+      }
+
+      body.preview-chain .factory {
+        display: none;
+      }
+
+      .artboard {
+        transform-origin: top left;
+      }
+
+      @media (max-width: 720px) {
+        html,
+        body {
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          background: transparent;
+        }
+
+        .artboard {
+          width: 100%;
+          height: 100%;
+          transform: none !important;
+        }
+
+        .stage {
+          position: relative;
+          inset: auto;
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          padding: 16px;
+          border-radius: 0;
+          overflow: hidden;
+        }
+
+        .header {
+          position: static;
+          top: auto;
+          right: auto;
+          left: auto;
+          padding: 0;
+        }
+
+        .subtitle {
+          max-width: none;
+          font-size: 18px;
+          line-height: 1.45;
+          text-align: left;
+          white-space: normal;
+        }
+
+        .board {
+          position: static;
+          left: auto;
+          right: auto;
+          top: auto;
+          height: auto;
+          grid-template-columns: 1fr;
+          gap: 12px;
+          margin-top: 14px;
+        }
+
+        .map,
+        .diagnosis {
+          border-radius: 18px;
+        }
+
+        .map {
+          padding: 14px;
+        }
+
+        .map-head {
+          align-items: start;
+          gap: 8px;
+        }
+
+        .map-head h2,
+        .ai-head h2,
+        .diagnosis h2 {
+          font-size: 23px;
+          line-height: 1.12;
+        }
+
+        .map-head span,
+        .ai-head span,
+        .diagnosis p {
+          font-size: 14px;
+          line-height: 1.45;
+        }
+
+        .process {
+          position: relative;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+          margin-top: 14px;
+        }
+
+        .process::before {
+          display: none;
+        }
+
+        .node {
+          min-height: auto;
+          padding: 12px;
+          border-radius: 14px;
+        }
+
+        .node small {
+          font-size: 11px;
+        }
+
+        .node b {
+          margin-top: 8px;
+          font-size: 19px;
+        }
+
+        .node .pain {
+          min-height: 24px;
+          margin-top: 8px;
+          padding: 0 8px;
+          font-size: 11px;
+        }
+
+        .node p {
+          margin-top: 8px;
+          font-size: 12px;
+          line-height: 1.42;
+        }
+
+        .ai-layer {
+          margin-top: 12px;
+          padding: 12px;
+          border-radius: 16px;
+        }
+
+        .entry-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+        }
+
+        .entry {
+          min-height: 56px;
+          padding: 10px;
+          border-radius: 12px;
+        }
+
+        .entry strong {
+          font-size: 13px;
+        }
+
+        .entry span {
+          font-size: 11px;
+        }
+
+        .diagnosis {
+          padding: 14px;
+        }
+
+        .stat-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 8px;
+          margin-top: 12px;
+        }
+
+        .stat {
+          min-height: 54px;
+          padding: 8px;
+          border-radius: 12px;
+        }
+
+        .stat strong {
+          font-size: 23px;
+        }
+
+        .stat span {
+          font-size: 10px;
+        }
+
+        .diagnosis .accent {
+          margin-top: 10px;
+          font-size: 13px;
+        }
+
+        .principle {
+          position: static;
+          left: auto;
+          right: auto;
+          bottom: auto;
+          grid-template-columns: 1fr;
+          gap: 8px;
+          margin-top: 12px;
+        }
+
+        .flow-arrow {
+          display: none;
+        }
+
+        .flow-node {
+          min-height: 42px;
+          justify-content: start;
+          padding: 8px 10px;
+          border-radius: 14px;
+        }
+
+        .flow-node i {
+          width: 26px;
+          height: 26px;
+          font-size: 12px;
+        }
+
+        .flow-node span {
+          font-size: 12px;
+        }
+
+        /* Mobile grouping baseline: 1-2 as one card, 3 as diagnosis card, 4 as two-row flow. */
+        html,
+        body {
+          height: auto;
+          min-height: 100%;
+          overflow: hidden;
+          background: transparent;
+        }
+
+        body {
+          display: block;
+          padding: 0;
+        }
+
+        .artboard {
+          width: 100%;
+          height: auto;
+          min-height: 100%;
+          overflow: visible;
+          transform: none !important;
+        }
+
+        .stage {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          height: auto;
+          min-height: 100%;
+          margin: 0;
+          padding: 30px 16px;
+          gap: 16px;
+          border-radius: 0;
+          overflow: visible;
+        }
+
+        .stage::before,
+        .header {
+          display: none !important;
+        }
+
+        .board {
+          position: static;
+          display: flex;
+          flex-direction: column;
+          height: auto;
+          gap: 16px;
+          margin: 0;
+          padding: 0;
+          border: 0;
+          border-radius: 0;
+          background: transparent;
+          box-shadow: none;
+        }
+
+        .map {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          min-width: 0;
+          padding: 12px;
+          border: 1px solid rgba(24, 24, 24, 0.06);
+          border-radius: 22px;
+          background: rgba(255, 255, 255, 0.9);
+          box-shadow: 0 18px 46px rgba(37, 32, 24, 0.1);
+        }
+
+        .map-head,
+        .ai-head {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 6px;
+          align-items: start;
+          margin: 0;
+        }
+
+        .map-head h2,
+        .ai-head h2,
+        .diagnosis h2 {
+          font-size: 25px;
+          line-height: 1.15;
+        }
+
+        .map-head span,
+        .ai-head span {
+          font-size: 13px;
+          line-height: 1.4;
+        }
+
+        .process {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+          margin: 0;
+        }
+
+        .process::before,
+        .node::after {
+          display: none !important;
+          content: none !important;
+        }
+
+        .node {
+          min-height: 144px;
+          padding: 12px 10px;
+          border-radius: 16px;
+        }
+
+        .node small {
+          font-size: 12px;
+          line-height: 1.25;
+        }
+
+        .node b {
+          margin-top: 8px;
+          font-size: 20px;
+          line-height: 1.16;
+        }
+
+        .node .pain {
+          min-height: auto;
+          margin-top: 8px;
+          padding: 4px 8px;
+          font-size: 12px;
+          line-height: 1.2;
+        }
+
+        .node p {
+          margin-top: 9px;
+          font-size: 13px;
+          line-height: 1.45;
+        }
+
+        .ai-layer {
+          margin-top: 0;
+          padding: 12px;
+          border-radius: 18px;
+          background: rgba(255, 253, 248, 0.72);
+        }
+
+        .entry-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+        }
+
+        .entry {
+          min-height: 64px;
+          padding: 10px;
+          border-radius: 13px;
+        }
+
+        .entry strong {
+          font-size: 14px;
+          line-height: 1.25;
+        }
+
+        .entry span {
+          margin-top: 6px;
+          font-size: 12px;
+          line-height: 1.25;
+        }
+
+        .diagnosis {
+          gap: 16px;
+          padding: 20px;
+          border-radius: 22px;
+        }
+
+        .diagnosis p {
+          font-size: 17px;
+          line-height: 1.5;
+        }
+
+        .stat-grid {
+          grid-template-columns: 1fr;
+          gap: 10px;
+          margin-top: 0;
+        }
+
+        .stat {
+          min-height: 58px;
+          padding: 10px 14px;
+          border-radius: 14px;
+        }
+
+        .stat span {
+          font-size: 15px;
+        }
+
+        .stat strong {
+          font-size: 27px;
+        }
+
+        .diagnosis .accent {
+          margin-top: 0;
+          font-size: 16px;
+          line-height: 1.45;
+        }
+
+        .principle {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 10px;
+          margin-top: 0;
+          padding: 16px;
+          border-radius: 22px;
+          background: rgba(223, 247, 233, 0.86);
+        }
+
+        .flow-arrow {
+          display: none !important;
+        }
+
+        .flow-node {
+          min-height: 58px;
+          grid-template-columns: 34px minmax(0, 1fr);
+          justify-content: start;
+          gap: 10px;
+          padding: 8px 10px;
+          border-radius: 14px;
+          background: rgba(255, 255, 255, 0.32);
+          white-space: normal;
+        }
+
+        .flow-node:last-child {
+          grid-column: 1 / -1;
+        }
+
+        .flow-node i {
+          width: 34px;
+          height: 34px;
+          font-size: 14px;
+        }
+
+        .flow-node span {
+          font-size: 14px;
+          line-height: 1.25;
+        }
+      }
+      @media (max-width: 720px) {
+        .header {
+          display: block !important;
+          position: static;
+          top: auto;
+          right: auto;
+          left: auto;
+          order: 0;
+          padding: 0 4px;
+        }
+
+        .subtitle {
+          max-width: none;
+          color: #2f3c4c;
+          font-size: 18px;
+          font-weight: 650;
+          line-height: 1.45;
+          text-align: left;
+          white-space: normal;
+        }
+
+        .diagnosis .accent {
+          font-size: 15px;
+          line-height: 1.28;
+          letter-spacing: -0.02em;
+          white-space: nowrap;
+        }
+
+        .principle {
+          padding: 12px 16px;
+          gap: 8px;
+        }
+
+        .flow-node {
+          min-height: 50px;
+          padding: 7px 10px;
+        }
+      }
+    </style>
+  </head>
+  <body class="preview-chain">
+    <section class="artboard factory" data-id="factory">
+      <div class="stage">
+        <div class="header">
+          <p class="subtitle">市场判断、内容产出、招商跟进和运营复盘之间没有被连成一个持续流程</p>
+        </div>
+        <div class="board">
+          <div class="map">
+            <div class="map-head">
+              <h2>增长断点诊断图</h2>
+              <span>先找出增长里的断点</span>
+            </div>
+            <div class="process">
+              <article class="node">
+                <small>01 市场判断</small>
+                <b>市场机会</b>
+                <em class="pain">竞品变化快</em>
+                <p>竞品上新、渠道价格和爆品趋势分散在多个平台。</p>
+              </article>
+              <article class="node">
+                <small>02 内容引流</small>
+                <b>内容选题</b>
+                <em class="pain">产出节奏慢</em>
+                <p>新品卖点、短视频脚本和活动入口缺少稳定节奏。</p>
+              </article>
+              <article class="node">
+                <small>03 招商推进</small>
+                <b>高潜线索</b>
+                <em class="pain">跟进分散</em>
+                <p>代理商、经销商和渠道客户的跟进标准不统一。</p>
+              </article>
+              <article class="node">
+                <small>04 运营复盘</small>
+                <b>有效打法</b>
+                <em class="pain">难以沉淀</em>
+                <p>有效选品、内容和招商打法难以沉淀给团队复用。</p>
+              </article>
+            </div>
+            <div class="ai-layer">
+              <div class="ai-head">
+                <h2>流程改造位置</h2>
+                <span>不是增加工具，而是改造关键增长环节</span>
+              </div>
+              <div class="entry-grid">
+                <div class="entry"><strong>追踪竞品与趋势</strong><span>市场洞察</span></div>
+                <div class="entry"><strong>形成选题与素材</strong><span>内容引流</span></div>
+                <div class="entry"><strong>规范线索分层</strong><span>招商跟进</span></div>
+                <div class="entry"><strong>复用有效打法</strong><span>运营复盘</span></div>
+              </div>
+            </div>
+          </div>
+          <aside class="diagnosis">
+            <h2>诊断结论</h2>
+            <p>品牌工厂不是缺少单点工具，而是选品判断、内容节奏、渠道招商和运营复盘没有形成持续闭环。</p>
+            <div class="stat-grid">
+              <div class="stat"><span>市场机会</span><strong>32</strong></div>
+              <div class="stat"><span>内容选题</span><strong>68</strong></div>
+              <div class="stat"><span>高潜线索</span><strong>19</strong></div>
+            </div>
+            <p class="accent">优先从竞品洞察、内容引流和招商线索分层切入。</p>
+          </aside>
+        </div>
+        <div class="principle">
+          <div class="flow-node"><i>1</i><span>先诊断断点</span></div>
+          <span class="flow-arrow" aria-hidden="true"></span>
+          <div class="flow-node"><i>2</i><span>再判断流程改造位置</span></div>
+          <span class="flow-arrow" aria-hidden="true"></span>
+          <div class="flow-node"><i>3</i><span>最后沉淀可复用 Skill</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="artboard chain" data-id="chain">
+      <div class="stage">
+        <div class="header">
+          <p class="subtitle">获客、咨询、复购和培训动作不稳定，导致总部经验很难被门店重复执行</p>
+        </div>
+        <div class="board">
+          <div class="map">
+            <div class="map-head">
+              <h2>运营断点诊断图</h2>
+              <span>让总部经验进入门店流程</span>
+            </div>
+            <div class="process">
+              <article class="node">
+                <small>01 本地获客</small>
+                <b>客户入口</b>
+                <em class="pain">获客成本高</em>
+                <p>团购、短视频和转介绍入口分散，线索承接不连续。</p>
+              </article>
+              <article class="node">
+                <small>02 咨询转化</small>
+                <b>顾问话术</b>
+                <em class="pain">能力不齐</em>
+                <p>皮肤、项目和套餐解释依赖顾问个人经验。</p>
+              </article>
+              <article class="node">
+                <small>03 私域复购</small>
+                <b>回访任务</b>
+                <em class="pain">容易断档</em>
+                <p>护理周期、到店记录和复购提醒容易遗漏。</p>
+              </article>
+              <article class="node">
+                <small>04 门店培训</small>
+                <b>岗位训练</b>
+                <em class="pain">质量波动</em>
+                <p>顾问话术、服务标准和店长复盘难以统一。</p>
+              </article>
+            </div>
+            <div class="ai-layer">
+              <div class="ai-head">
+                <h2>流程改造位置</h2>
+                <span>把总部经验转成门店可复制动作</span>
+              </div>
+              <div class="entry-grid">
+                <div class="entry"><strong>统一线索承接</strong><span>本地获客</span></div>
+                <div class="entry"><strong>沉淀咨询话术</strong><span>咨询转化</span></div>
+                <div class="entry"><strong>管理复购周期</strong><span>私域复购</span></div>
+                <div class="entry"><strong>复制门店标准</strong><span>门店培训</span></div>
+              </div>
+            </div>
+          </div>
+          <aside class="diagnosis">
+            <h2>诊断结论</h2>
+            <p>本地连锁的关键问题不是工具数量，而是获客承接、顾问咨询、私域复购和门店培训没有被流程化。</p>
+            <div class="stat-grid">
+              <div class="stat"><span>回访任务</span><strong>126</strong></div>
+              <div class="stat"><span>培训题库</span><strong>54</strong></div>
+              <div class="stat"><span>复购提醒</span><strong>81</strong></div>
+            </div>
+            <p class="accent">优先从线索承接、顾问话术和复购周期管理切入。</p>
+          </aside>
+        </div>
+        <div class="principle">
+          <div class="flow-node"><i>1</i><span>先诊断断点</span></div>
+          <span class="flow-arrow" aria-hidden="true"></span>
+          <div class="flow-node"><i>2</i><span>再把经验转成流程</span></div>
+          <span class="flow-arrow" aria-hidden="true"></span>
+          <div class="flow-node"><i>3</i><span>最后让门店稳定复制</span></div>
+        </div>
+      </div>
+    </section>
+    <script>
+      (() => {
+        const artboard = document.querySelector(".chain.artboard");
+        if (!artboard) return;
+
+        const fitArtboard = () => {
+          if (window.innerWidth <= 720) {
+            artboard.style.transform = "";
+            return;
+          }
+          const scale = Math.min(window.innerWidth / 2360, window.innerHeight / 1320);
+          artboard.style.transform = `scale(${scale})`;
+        };
+
+        window.addEventListener("resize", fitArtboard);
+        fitArtboard();
+      })();
+    </script>
+  </body>
+</html>

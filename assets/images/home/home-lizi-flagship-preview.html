@@ -1,0 +1,1594 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>home-lizi-flagship</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 2360px;
+        height: 1320px;
+        margin: 0;
+        overflow: hidden;
+        background: #fffdf8;
+        color: #151515;
+        font-family:
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          "PingFang SC",
+          "Microsoft YaHei",
+          "Noto Sans CJK SC",
+          Arial,
+          sans-serif;
+      }
+
+      .artboard {
+        position: relative;
+        width: 2360px;
+        height: 1320px;
+        overflow: hidden;
+        background: #ffe2d4;
+      }
+
+      .artboard::before {
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(90deg, rgba(255, 253, 249, 0.7), rgba(255, 247, 242, 0.6) 46%, rgba(244, 248, 255, 0.68)),
+          radial-gradient(circle at 18% 19%, rgba(248, 199, 214, 0.46), transparent 31%),
+          radial-gradient(circle at 61% 35%, rgba(255, 233, 206, 0.48), transparent 34%),
+          radial-gradient(circle at 90% 86%, rgba(210, 224, 255, 0.58), transparent 35%);
+        content: "";
+      }
+
+      .stage {
+        position: relative;
+        z-index: 1;
+        width: 2320px;
+        height: 1252px;
+        margin: 34px 20px;
+        overflow: hidden;
+        border-radius: 62px;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .stage::before {
+        position: absolute;
+        inset: 0;
+        opacity: 0.22;
+        background:
+          radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.62) 0 13%, transparent 14%),
+          linear-gradient(135deg, transparent 0 44%, rgba(255, 255, 255, 0.36) 45% 46%, transparent 47%),
+          linear-gradient(35deg, transparent 0 60%, rgba(255, 255, 255, 0.28) 61% 62%, transparent 63%);
+        content: "";
+      }
+
+      .frame {
+        display: none;
+      }
+
+      .layout {
+        position: absolute;
+        z-index: 1;
+        top: 112px;
+        right: 110px;
+        bottom: 112px;
+        left: 110px;
+        display: grid;
+        grid-template-columns: 790px 682px 500px;
+        gap: 64px;
+        align-items: stretch;
+      }
+
+      .card {
+        border: 1px solid rgba(32, 26, 20, 0.06);
+        border-radius: 34px;
+        background: rgba(255, 255, 255, 0.88);
+        box-shadow: 0 24px 64px rgba(74, 50, 35, 0.1);
+        backdrop-filter: blur(12px);
+      }
+
+      .left-card {
+        align-self: center;
+        height: 880px;
+        padding: 54px 66px 46px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        padding: 7px 20px;
+        border: 1px solid rgba(220, 147, 76, 0.45);
+        border-radius: 999px;
+        background: rgba(255, 245, 235, 0.92);
+        color: #9b5f18;
+        font-size: 23px;
+        font-weight: 780;
+      }
+
+      h1,
+      h2 {
+        margin: 0;
+        font-family:
+          "Songti SC",
+          "Noto Serif SC",
+          STSong,
+          SimSun,
+          serif;
+        font-weight: 700;
+        letter-spacing: 0;
+      }
+
+      .left-card h1 {
+        margin-top: 24px;
+        font-size: 86px;
+        line-height: 1;
+      }
+
+      .case-title {
+        max-width: 640px;
+        margin: 16px 0 0;
+        font-family:
+          "Songti SC",
+          "Noto Serif SC",
+          STSong,
+          SimSun,
+          serif;
+        color: #1d1a17;
+        font-size: 40px;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+
+      .left-card p {
+        margin: 22px 0 0;
+        color: #484540;
+        font-size: 26px;
+        line-height: 1.42;
+      }
+
+      .diagnosis-board {
+        margin-top: 24px;
+        overflow: hidden;
+        border: 1px solid rgba(40, 34, 28, 0.08);
+        border-radius: 28px;
+        background:
+          linear-gradient(90deg, rgba(251, 238, 231, 0.82), rgba(250, 250, 247, 0.88)),
+          #fffaf4;
+      }
+
+      .board-head {
+        display: grid;
+        grid-template-columns: 0.68fr 1.32fr;
+        align-items: center;
+        gap: 8px;
+        padding: 16px 20px 12px;
+        border-bottom: 1px solid rgba(40, 34, 28, 0.08);
+      }
+
+      .board-head span,
+      .board-head strong {
+        font-size: 22px;
+        font-weight: 820;
+      }
+
+      .board-head span {
+        color: #9b5f18;
+      }
+
+      .board-head strong {
+        color: #181614;
+      }
+
+      .board-head strong,
+      .diagnosis-grid .diag-col:nth-child(2) {
+        transform: translateX(10px);
+      }
+
+      .diagnosis-grid {
+        display: grid;
+        grid-template-columns: 0.68fr 1.32fr;
+        gap: 8px;
+        padding: 16px 20px 13px;
+      }
+
+      .diag-col {
+        display: grid;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .diag-col small {
+        color: #746a60;
+        font-size: 21px;
+        font-weight: 760;
+      }
+
+      .diag-row {
+        display: grid;
+        grid-template-columns: 26px 1fr;
+        align-items: center;
+        gap: 10px;
+        min-height: 40px;
+        color: #2d2925;
+        font-size: 24px;
+        font-weight: 760;
+      }
+
+      .diag-row i,
+      .app-row i {
+        width: 26px;
+        height: 26px;
+        border-radius: 999px;
+        background: var(--dot);
+        box-shadow: inset 0 0 0 6px rgba(255, 255, 255, 0.58);
+      }
+
+      .app-row {
+        display: grid;
+        grid-template-columns: 26px 84px 1fr;
+        align-items: center;
+        column-gap: 10px;
+        min-height: 40px;
+        color: #2d2925;
+        font-size: 23px;
+        font-weight: 760;
+      }
+
+      .app-row strong {
+        font-size: 23px;
+        white-space: nowrap;
+      }
+
+      .app-row span {
+        margin-left: 30px;
+        white-space: nowrap;
+      }
+
+      .skill-ribbon {
+        display: grid;
+        grid-template-columns: 158px 1fr;
+        align-items: center;
+        gap: 14px;
+        margin: 0 20px 18px;
+        padding: 13px 16px;
+        border-radius: 20px;
+        background: #171513;
+        color: #fff9ef;
+      }
+
+      .skill-ribbon span {
+        font-size: 24px;
+        font-weight: 820;
+      }
+
+      .skill-ribbon em {
+        color: rgba(255, 249, 239, 0.72);
+        font-size: 21px;
+        font-style: normal;
+        line-height: 1.18;
+      }
+
+      .pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 24px;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 0 18px;
+        border-radius: 999px;
+        background: #f4f0ea;
+        color: #151515;
+        font-size: 23px;
+        font-weight: 780;
+      }
+
+      .middle-card {
+        position: relative;
+        overflow: hidden;
+        padding: 48px 42px 36px;
+      }
+
+      .middle-card .eyebrow,
+      .task-card .eyebrow {
+        color: #6f655c;
+        font-size: 25px;
+        font-weight: 780;
+      }
+
+      .middle-card h2 {
+        margin-top: 26px;
+        font-size: 66px;
+        line-height: 1;
+      }
+
+      .middle-card .sub {
+        margin-top: 26px;
+        color: #4b4742;
+        font-size: 29px;
+        line-height: 1.35;
+      }
+
+      .id-meta {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 32px;
+      }
+
+      .id-meta span {
+        min-height: 58px;
+        padding: 15px 16px;
+        border-radius: 999px;
+        background: #f5f1eb;
+        color: #554f49;
+        font-size: 24px;
+        font-weight: 760;
+        text-align: center;
+      }
+
+      .skin-visual {
+        display: grid;
+        grid-template-columns: 0.94fr 1.06fr;
+        gap: 18px;
+        margin-top: 28px;
+      }
+
+      .face-panel,
+      .report-panel {
+        min-height: 278px;
+        border: 1px solid rgba(31, 27, 22, 0.07);
+        border-radius: 28px;
+        background: rgba(250, 247, 242, 0.78);
+      }
+
+      .face-panel {
+        position: relative;
+        display: grid;
+        justify-items: center;
+        align-items: start;
+        overflow: hidden;
+        padding-top: 30px;
+      }
+
+      .face-panel::before {
+        position: absolute;
+        inset: 26px;
+        border-radius: 26px;
+        background:
+          radial-gradient(circle at 34% 35%, rgba(245, 215, 224, 0.92) 0 15px, transparent 16px),
+          radial-gradient(circle at 58% 45%, rgba(255, 228, 197, 0.9) 0 19px, transparent 20px),
+          radial-gradient(circle at 48% 69%, rgba(219, 228, 255, 0.9) 0 17px, transparent 18px);
+        content: "";
+      }
+
+      .face {
+        position: relative;
+        z-index: 1;
+        width: 134px;
+        height: 178px;
+        border: 5px solid rgba(28, 25, 22, 0.7);
+        border-radius: 48% 48% 44% 44%;
+        background:
+          radial-gradient(circle at 40% 42%, #1f1b17 0 5px, transparent 6px),
+          radial-gradient(circle at 60% 42%, #1f1b17 0 5px, transparent 6px),
+          linear-gradient(#fbe8df, #fff8f1);
+        box-shadow: 0 24px 46px rgba(98, 58, 43, 0.14);
+      }
+
+      .face::before,
+      .face::after {
+        position: absolute;
+        content: "";
+      }
+
+      .face::before {
+        top: 28px;
+        left: 50%;
+        width: 72px;
+        height: 24px;
+        border-top: 4px solid rgba(31, 27, 22, 0.28);
+        border-radius: 50%;
+        transform: translateX(-50%);
+      }
+
+      .face::after {
+        right: 36px;
+        bottom: 42px;
+        left: 36px;
+        height: 18px;
+        border-bottom: 4px solid rgba(31, 27, 22, 0.46);
+        border-radius: 50%;
+      }
+
+      .skin-tags {
+        position: absolute;
+        right: 18px;
+        bottom: 20px;
+        left: 18px;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .skin-tags span {
+        min-height: 38px;
+        padding: 7px 8px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.76);
+        color: #675c53;
+        font-size: 21px;
+        font-weight: 780;
+        text-align: center;
+      }
+
+      .report-panel {
+        position: relative;
+        display: grid;
+        place-items: center;
+        padding: 14px 10px 10px;
+      }
+
+      .radar-chart {
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+
+      .radar-chart .grid {
+        fill: none;
+        stroke: rgba(40, 34, 28, 0.1);
+        stroke-width: 1.4;
+      }
+
+      .radar-chart .axis {
+        stroke: rgba(40, 34, 28, 0.12);
+        stroke-width: 1.2;
+      }
+
+      .radar-chart .area {
+        fill: rgba(245, 180, 197, 0.34);
+        stroke: #f0a3ba;
+        stroke-width: 3;
+      }
+
+      .radar-chart .area-shadow {
+        fill: rgba(185, 201, 255, 0.18);
+      }
+
+      .radar-chart .point {
+        fill: #fff;
+        stroke: #f0a3ba;
+        stroke-width: 3;
+      }
+
+      .radar-chart text {
+        fill: #70675e;
+        font-size: 21px;
+        font-weight: 780;
+        text-anchor: middle;
+      }
+
+      .growth-bridge {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 24px;
+      }
+
+      .bridge-card {
+        position: relative;
+        min-height: 116px;
+        overflow: hidden;
+        padding: 18px 17px 15px;
+        border: 1px solid rgba(31, 27, 22, 0.07);
+        border-radius: 24px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(250, 247, 242, 0.72)),
+          var(--tint);
+      }
+
+      .bridge-card::after {
+        position: absolute;
+        right: -18px;
+        bottom: -26px;
+        width: 92px;
+        height: 92px;
+        border-radius: 50%;
+        background: color-mix(in srgb, var(--accent) 22%, #fff);
+        content: "";
+      }
+
+      .bridge-card strong,
+      .bridge-card span,
+      .bridge-card em {
+        position: relative;
+        z-index: 1;
+      }
+
+      .bridge-card strong {
+        display: block;
+        color: #2f2a25;
+        font-size: 24px;
+        font-weight: 820;
+      }
+
+      .bridge-card span {
+        display: block;
+        margin-top: 8px;
+        color: #655d54;
+        font-size: 21px;
+        font-weight: 760;
+        line-height: 1.18;
+        white-space: nowrap;
+      }
+
+      .bridge-card em {
+        display: inline-flex;
+        align-items: center;
+        min-height: 26px;
+        margin-top: 8px;
+        padding: 0 9px;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--accent) 18%, #fff);
+        color: var(--ink);
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 820;
+      }
+
+      .skin-flow {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 24px;
+      }
+
+      .flow-node {
+        min-height: 90px;
+        padding: 15px 10px;
+        border-radius: 22px;
+        background: linear-gradient(180deg, var(--node), rgba(255, 255, 255, 0.74));
+        color: #302b26;
+        font-size: 22px;
+        font-weight: 820;
+        text-align: center;
+      }
+
+      .flow-node small {
+        display: block;
+        margin-top: 7px;
+        color: #746b62;
+        font-size: 20px;
+        font-weight: 760;
+      }
+
+      .right-stack {
+        display: grid;
+        grid-template-rows: repeat(3, minmax(0, 1fr));
+        gap: 32px;
+        min-height: 0;
+      }
+
+      .task-card {
+        overflow: hidden;
+        padding: 34px 36px;
+      }
+
+      .task-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .task-card h2 {
+        margin-top: 20px;
+        font-size: 48px;
+        line-height: 1.05;
+      }
+
+      .task-card p {
+        margin: 16px 0 0;
+        color: #504b45;
+        font-size: 24px;
+        line-height: 1.36;
+      }
+
+      .app-tags {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      .app-tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 34px;
+        padding: 0 12px;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--app) 18%, #fff);
+        color: var(--app-dark);
+        font-size: 20px;
+        font-weight: 820;
+      }
+
+      .card-graphic {
+        display: grid;
+        gap: 9px;
+        margin-top: 20px;
+      }
+
+      .graphic-line {
+        display: grid;
+        grid-template-columns: 20px 1fr auto;
+        align-items: center;
+        gap: 12px;
+        min-height: 34px;
+        color: #675f56;
+        font-size: 23px;
+        font-weight: 760;
+      }
+
+      .graphic-line i {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--app);
+      }
+
+      .graphic-line em {
+        width: 86px;
+        height: 11px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: rgba(32, 28, 23, 0.08);
+      }
+
+      .graphic-line em::after {
+        display: block;
+        width: var(--w);
+        height: 100%;
+        border-radius: inherit;
+        background: var(--app);
+        content: "";
+      }
+
+      .soft-line {
+        position: absolute;
+        top: 50%;
+        left: 940px;
+        width: 930px;
+        height: 1px;
+        background: linear-gradient(90deg, rgba(194, 127, 120, 0.12), rgba(190, 198, 222, 0.22));
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        background: transparent;
+      }
+
+      body {
+        display: block;
+      }
+
+      .artboard {
+        transform-origin: top left;
+        background:
+          radial-gradient(circle at 5% 91%, rgba(238, 225, 255, 0.5), transparent 17%),
+          radial-gradient(circle at 97% 17%, rgba(238, 214, 232, 0.44), transparent 16%),
+          radial-gradient(circle at 93% 88%, rgba(208, 229, 255, 0.66), transparent 20%),
+          radial-gradient(circle at 42% 42%, rgba(255, 224, 214, 0.36), transparent 35%),
+          linear-gradient(115deg, #fff1ea 0%, #f7fbff 49%, #edf9f5 100%);
+        box-shadow:
+          inset 0 0 0 2px rgba(214, 187, 196, 0.52),
+          inset 0 0 88px rgba(255, 255, 255, 0.5);
+      }
+
+      @media (max-width: 720px) {
+        html,
+        body {
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          background: transparent;
+        }
+
+        .artboard {
+          width: 100%;
+          height: 100%;
+          transform: none !important;
+        }
+
+        .stage {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          border-radius: 0;
+          overflow: hidden;
+        }
+
+        .layout {
+          position: relative;
+          inset: auto;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 12px;
+          height: 100%;
+          padding: 16px;
+          align-items: start;
+          overflow: hidden;
+        }
+
+        .card {
+          border-radius: 18px;
+          box-shadow: 0 14px 34px rgba(74, 50, 35, 0.08);
+        }
+
+        .left-card {
+          align-self: auto;
+          height: auto;
+          padding: 16px;
+        }
+
+        .badge {
+          min-height: 30px;
+          padding: 4px 12px;
+          font-size: 12px;
+        }
+
+        .left-card h1 {
+          margin-top: 12px;
+          font-size: 36px;
+          line-height: 1.02;
+        }
+
+        .case-title {
+          max-width: none;
+          margin-top: 8px;
+          font-size: 22px;
+          line-height: 1.18;
+        }
+
+        .left-card p {
+          margin-top: 10px;
+          font-size: 14px;
+          line-height: 1.45;
+        }
+
+        .diagnosis-board {
+          margin-top: 12px;
+          border-radius: 16px;
+        }
+
+        .board-head {
+          grid-template-columns: 1fr 1fr;
+          padding: 10px 12px 8px;
+        }
+
+        .board-head span,
+        .board-head strong {
+          font-size: 12px;
+        }
+
+        .board-head strong,
+        .diagnosis-grid .diag-col:nth-child(2) {
+          transform: none;
+        }
+
+        .diagnosis-grid {
+          grid-template-columns: 1fr 1.18fr;
+          gap: 8px;
+          padding: 10px 12px;
+        }
+
+        .diag-col {
+          gap: 6px;
+        }
+
+        .diag-col small {
+          font-size: 11px;
+        }
+
+        .diag-row,
+        .app-row {
+          grid-template-columns: 14px 1fr;
+          gap: 6px;
+          min-height: 24px;
+          font-size: 12px;
+        }
+
+        .app-row {
+          grid-template-columns: 14px 44px 1fr;
+          column-gap: 6px;
+        }
+
+        .app-row strong {
+          font-size: 12px;
+        }
+
+        .app-row span {
+          margin-left: 0;
+          font-size: 11px;
+        }
+
+        .diag-row i,
+        .app-row i {
+          width: 14px;
+          height: 14px;
+          box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.58);
+        }
+
+        .skill-ribbon {
+          grid-template-columns: 1fr;
+          gap: 4px;
+          margin: 0 12px 12px;
+          padding: 9px 10px;
+          border-radius: 12px;
+        }
+
+        .skill-ribbon span {
+          font-size: 13px;
+        }
+
+        .skill-ribbon em {
+          font-size: 11px;
+        }
+
+        .middle-card {
+          padding: 16px;
+        }
+
+        .middle-card .eyebrow,
+        .task-card .eyebrow {
+          font-size: 13px;
+        }
+
+        .middle-card h2 {
+          margin-top: 8px;
+          font-size: 36px;
+        }
+
+        .middle-card .sub {
+          margin-top: 8px;
+          font-size: 15px;
+        }
+
+        .id-meta {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+          margin-top: 12px;
+        }
+
+        .id-meta span {
+          min-height: 34px;
+          padding: 8px;
+          font-size: 12px;
+        }
+
+        .skin-visual {
+          display: none;
+        }
+
+        .growth-bridge,
+        .skin-flow {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+          margin-top: 12px;
+        }
+
+        .bridge-card {
+          min-height: 70px;
+          padding: 10px;
+          border-radius: 14px;
+        }
+
+        .bridge-card strong,
+        .flow-node {
+          font-size: 13px;
+        }
+
+        .bridge-card span,
+        .bridge-card em,
+        .flow-node small {
+          font-size: 10px;
+        }
+
+        .skin-flow {
+          display: none;
+        }
+
+        .right-stack {
+          display: grid;
+          grid-template-rows: none;
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        .task-card {
+          padding: 14px;
+          border-radius: 18px;
+        }
+
+        .task-card h2 {
+          margin-top: 8px;
+          font-size: 24px;
+        }
+
+        .task-card p {
+          margin-top: 8px;
+          font-size: 13px;
+          line-height: 1.4;
+        }
+
+        .app-tag {
+          min-height: 24px;
+          padding: 0 8px;
+          font-size: 10px;
+        }
+
+        .card-graphic {
+          gap: 6px;
+          margin-top: 10px;
+        }
+
+        .graphic-line {
+          grid-template-columns: 12px 1fr 54px;
+          gap: 8px;
+          min-height: 22px;
+          font-size: 11px;
+        }
+
+        .graphic-line i {
+          width: 12px;
+          height: 12px;
+        }
+
+        .graphic-line em {
+          width: 54px;
+          height: 7px;
+        }
+
+        .soft-line,
+        .stage::before {
+          display: none;
+        }
+      }
+
+      @media (max-width: 720px) {
+        html,
+        body {
+          width: 100%;
+          height: auto;
+          min-height: 0;
+          overflow: visible;
+          background: transparent;
+        }
+
+        body {
+          display: block;
+        }
+
+        .artboard {
+          width: 100%;
+          height: auto;
+          min-height: 0;
+          overflow: visible;
+          transform: none !important;
+          background:
+            radial-gradient(circle at 96% 8%, rgba(238, 214, 232, 0.22), transparent 18%),
+            linear-gradient(180deg, #fff1ea 0%, #fff7f2 100%);
+          box-shadow: none;
+        }
+
+        .stage {
+          position: static;
+          width: 100%;
+          height: auto;
+          margin: 0;
+          padding: 30px 16px;
+          overflow: visible;
+          border-radius: 0;
+        }
+
+        .stage::before,
+        .soft-line,
+        .frame {
+          display: none !important;
+        }
+
+        .layout {
+          position: static;
+          inset: auto;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 16px;
+          height: auto;
+          padding: 0;
+          overflow: visible;
+          align-items: stretch;
+        }
+
+        .card {
+          width: 100%;
+          border-radius: 20px;
+          background: rgba(255, 255, 255, 0.9);
+          box-shadow: 0 18px 46px rgba(74, 50, 35, 0.08);
+        }
+
+        .left-card {
+          align-self: auto;
+          height: auto;
+          padding: 30px 28px 26px;
+        }
+
+        .badge {
+          min-height: 38px;
+          padding: 6px 16px;
+          font-size: 17px;
+        }
+
+        .left-card h1 {
+          margin-top: 22px;
+          font-size: 36px;
+          line-height: 1.08;
+        }
+
+        .case-title {
+          max-width: none;
+          margin-top: 10px;
+          font-size: 27px;
+          line-height: 1.2;
+        }
+
+        .left-card p {
+          margin-top: 18px;
+          font-size: 19px;
+          line-height: 1.55;
+        }
+
+        .diagnosis-board {
+          margin-top: 22px;
+          border-radius: 18px;
+        }
+
+        .board-head {
+          grid-template-columns: 0.72fr 1.28fr;
+          gap: 8px;
+          padding: 12px 16px 10px;
+        }
+
+        .board-head span,
+        .board-head strong {
+          font-size: 16px;
+        }
+
+        .board-head strong,
+        .diagnosis-grid .diag-col:nth-child(2) {
+          transform: none;
+        }
+
+        .diagnosis-grid {
+          grid-template-columns: 0.72fr 1.28fr;
+          gap: 10px;
+          padding: 14px 16px 12px;
+        }
+
+        .diag-col {
+          gap: 8px;
+        }
+
+        .diag-col small {
+          font-size: 14px;
+        }
+
+        .diag-row,
+        .app-row {
+          min-height: 28px;
+          font-size: 15px;
+          line-height: 1.2;
+        }
+
+        .diag-row {
+          grid-template-columns: 17px 1fr;
+          gap: 8px;
+        }
+
+        .app-row {
+          grid-template-columns: 17px 58px 1fr;
+          column-gap: 8px;
+        }
+
+        .app-row strong {
+          font-size: 15px;
+        }
+
+        .app-row span {
+          margin-left: 0;
+          font-size: 14px;
+          white-space: normal;
+        }
+
+        .diag-row i,
+        .app-row i {
+          width: 17px;
+          height: 17px;
+          box-shadow: inset 0 0 0 4px rgba(255, 255, 255, 0.58);
+        }
+
+        .skill-ribbon {
+          grid-template-columns: 112px 1fr;
+          gap: 10px;
+          margin: 0 16px 16px;
+          padding: 10px 12px;
+          border-radius: 14px;
+        }
+
+        .skill-ribbon span {
+          font-size: 16px;
+        }
+
+        .skill-ribbon em {
+          font-size: 13px;
+          line-height: 1.25;
+        }
+
+        .middle-card {
+          padding: 30px 28px 26px;
+        }
+
+        .middle-card .eyebrow,
+        .task-card .eyebrow {
+          font-size: 18px;
+        }
+
+        .middle-card h2 {
+          margin-top: 20px;
+          font-size: 36px;
+          line-height: 1.08;
+        }
+
+        .middle-card .sub {
+          margin-top: 18px;
+          font-size: 21px;
+          line-height: 1.42;
+        }
+
+        .id-meta {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 10px;
+          margin-top: 22px;
+        }
+
+        .id-meta span {
+          min-height: 46px;
+          padding: 12px 10px;
+          font-size: 17px;
+        }
+
+        .skin-visual {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 12px;
+          margin-top: 18px;
+        }
+
+        .face-panel,
+        .report-panel {
+          min-height: 220px;
+          border-radius: 18px;
+        }
+
+        .face-panel {
+          padding-top: 22px;
+        }
+
+        .face {
+          width: 92px;
+          height: 126px;
+          border-width: 4px;
+        }
+
+        .skin-tags {
+          right: 10px;
+          bottom: 12px;
+          left: 10px;
+          gap: 6px;
+        }
+
+        .skin-tags span {
+          min-height: 30px;
+          padding: 6px 4px;
+          font-size: 14px;
+        }
+
+        .radar-chart text {
+          font-size: 15px;
+        }
+
+        .growth-bridge {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 8px;
+          margin-top: 16px;
+        }
+
+        .bridge-card {
+          min-height: 92px;
+          padding: 12px 10px;
+          border-radius: 14px;
+        }
+
+        .bridge-card strong {
+          font-size: 17px;
+        }
+
+        .bridge-card span {
+          margin-top: 6px;
+          font-size: 14px;
+          line-height: 1.2;
+          white-space: normal;
+        }
+
+        .bridge-card em {
+          min-height: 22px;
+          margin-top: 6px;
+          padding: 0 7px;
+          font-size: 12px;
+        }
+
+        .skin-flow {
+          display: grid;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 8px;
+          margin-top: 14px;
+        }
+
+        .flow-node {
+          min-height: 66px;
+          padding: 10px 6px;
+          border-radius: 14px;
+          font-size: 15px;
+        }
+
+        .flow-node small {
+          margin-top: 5px;
+          font-size: 12px;
+        }
+
+        .right-stack {
+          display: grid;
+          grid-template-columns: 1fr;
+          grid-template-rows: none;
+          gap: 16px;
+        }
+
+        .task-card {
+          padding: 26px 28px;
+          border-radius: 20px;
+        }
+
+        .task-top {
+          gap: 12px;
+        }
+
+        .task-card h2 {
+          margin-top: 18px;
+          font-size: 31px;
+          line-height: 1.05;
+        }
+
+        .task-card p {
+          margin-top: 12px;
+          font-size: 19px;
+          line-height: 1.45;
+        }
+
+        .app-tag {
+          min-height: 28px;
+          padding: 0 10px;
+          font-size: 13px;
+        }
+
+        .card-graphic {
+          gap: 8px;
+          margin-top: 16px;
+        }
+
+        .graphic-line {
+          grid-template-columns: 16px 1fr 68px;
+          gap: 10px;
+          min-height: 28px;
+          font-size: 16px;
+        }
+
+        .graphic-line i {
+          width: 16px;
+          height: 16px;
+        }
+
+        .graphic-line em {
+          width: 68px;
+          height: 8px;
+        }
+      }
+
+      @media (max-width: 430px) {
+        .stage {
+          padding: 30px 14px;
+        }
+
+        .left-card,
+        .middle-card {
+          padding: 28px 24px 24px;
+        }
+
+        .left-card h1 {
+          font-size: 34px;
+        }
+
+        .case-title {
+          font-size: 24px;
+        }
+
+        .left-card p,
+        .task-card p {
+          font-size: 17px;
+        }
+
+        .diagnosis-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .app-row {
+          grid-template-columns: 17px 62px 1fr;
+        }
+
+        .skill-ribbon {
+          grid-template-columns: 1fr;
+        }
+
+        .middle-card h2 {
+          font-size: 34px;
+        }
+
+        .radar-chart text {
+          font-size: 14px;
+        }
+
+        .task-card h2 {
+          font-size: 28px;
+        }
+
+        .middle-card .sub {
+          font-size: 18px;
+        }
+
+        .skin-visual {
+          grid-template-columns: 1fr;
+        }
+
+        .face-panel,
+        .report-panel {
+          min-height: 208px;
+        }
+
+        .growth-bridge {
+          grid-template-columns: 1fr;
+        }
+
+        .skin-flow {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .task-card {
+          padding: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="artboard">
+      <section class="stage">
+        <div class="frame"></div>
+        <div class="soft-line"></div>
+        <div class="layout">
+          <section class="card left-card">
+            <div class="badge">旗舰样板案例</div>
+            <h1>美妆连锁</h1>
+            <div class="case-title">精准护肤新实体连锁的 AI 增长样板</div>
+            <p>
+              蔚为把补鲜站入口、AI 测肤、Skin ID 建档、首购体验、私域复购和招商复制拆成流程，让真实项目可以被训练、被复盘、被复制。
+            </p>
+            <div class="diagnosis-board">
+              <div class="board-head"><span>增长诊断</span><strong>AI 解决方案</strong></div>
+              <div class="diagnosis-grid">
+                <div class="diag-col">
+                  <small>业务断点</small>
+                  <div class="diag-row"><i style="--dot:#f5b4c5"></i><span>低成本进站</span></div>
+                  <div class="diag-row"><i style="--dot:#ffd8a7"></i><span>状态解释</span></div>
+                  <div class="diag-row"><i style="--dot:#b9c9ff"></i><span>复购触发</span></div>
+                  <div class="diag-row"><i style="--dot:#bcebd8"></i><span>招商复制</span></div>
+                </div>
+                <div class="diag-col">
+                  <small>AI APP 承接</small>
+                  <div class="app-row"><i style="--dot:#4d7cff"></i><strong>AI 引流</strong><span>内容与活动入口</span></div>
+                  <div class="app-row"><i style="--dot:#18a873"></i><strong>AI 招商</strong><span>线索跟进与异议</span></div>
+                  <div class="app-row"><i style="--dot:#f08938"></i><strong>AI 运营</strong><span>私域任务与复盘</span></div>
+                  <div class="app-row"><i style="--dot:#8e63e6"></i><strong>AI 培训</strong><span>顾问和加盟商训练</span></div>
+                </div>
+              </div>
+              <div class="skill-ribbon"><span>Agent + Skill</span><em>状态解释 / 体验 SOP / 复购规则 / 招商异议</em></div>
+            </div>
+          </section>
+
+          <section class="card middle-card">
+            <div class="eyebrow">AI 测肤报告</div>
+            <h2>Skin ID</h2>
+            <div class="sub">进站 → AI 测肤 → 状态解释 → 建档</div>
+            <div class="id-meta">
+              <span>肤况档案</span>
+              <span>护理周期</span>
+              <span>标签分层</span>
+              <span>复购触发</span>
+            </div>
+
+            <div class="skin-visual">
+              <div class="face-panel" aria-label="肤况识别图">
+                <div class="face"></div>
+                <div class="skin-tags"><span>敏感</span><span>熬夜</span><span>换季</span></div>
+              </div>
+              <div class="report-panel" aria-label="肤况报告指标">
+                <svg class="radar-chart" viewBox="0 0 260 250" role="img" aria-label="六维肤况雷达图">
+                  <polygon class="grid" points="130,50 191,85 191,155 130,190 69,155 69,85" />
+                  <polygon class="grid" points="130,73 171,97 171,143 130,167 89,143 89,97" />
+                  <polygon class="grid" points="130,97 151,108 151,132 130,143 109,132 109,108" />
+                  <line class="axis" x1="130" y1="120" x2="130" y2="50" />
+                  <line class="axis" x1="130" y1="120" x2="191" y2="85" />
+                  <line class="axis" x1="130" y1="120" x2="191" y2="155" />
+                  <line class="axis" x1="130" y1="120" x2="130" y2="190" />
+                  <line class="axis" x1="130" y1="120" x2="69" y2="155" />
+                  <line class="axis" x1="130" y1="120" x2="69" y2="85" />
+                  <polygon class="area-shadow" points="130,63 171,96 175,146 130,182 92,142 95,100" />
+                  <polygon class="area" points="130,63 171,96 175,146 130,182 92,142 95,100" />
+                  <circle class="point" cx="130" cy="63" r="4" />
+                  <circle class="point" cx="171" cy="96" r="4" />
+                  <circle class="point" cx="175" cy="146" r="4" />
+                  <circle class="point" cx="130" cy="182" r="4" />
+                  <circle class="point" cx="92" cy="142" r="4" />
+                  <circle class="point" cx="95" cy="100" r="4" />
+                  <text x="130" y="24">状态解释</text>
+                  <text x="214" y="68">粒子组合</text>
+                  <text x="216" y="182">复购周期</text>
+                  <text x="130" y="230">会员分层</text>
+                  <text x="44" y="182">屏障状态</text>
+                  <text x="46" y="68">熬夜风险</text>
+                </svg>
+              </div>
+            </div>
+
+            <div class="growth-bridge" aria-label="Skin ID 增长承接">
+              <div class="bridge-card" style="--tint:#fff3f6;--accent:#f5b4c5;--ink:#94445e">
+                <strong>建档转化</strong>
+                <span>生成客户资产</span>
+                <em>Skin ID</em>
+              </div>
+              <div class="bridge-card" style="--tint:#fff6e8;--accent:#ffd8a7;--ink:#9b5f18">
+                <strong>首购匹配</strong>
+                <span>匹配粒子组合</span>
+                <em>顾问话术</em>
+              </div>
+              <div class="bridge-card" style="--tint:#f0f6ff;--accent:#b9c9ff;--ink:#3157b7">
+                <strong>复购任务</strong>
+                <span>推送私域任务</span>
+                <em>AI 运营</em>
+              </div>
+            </div>
+
+            <div class="skin-flow" aria-hidden="true">
+              <div class="flow-node" style="--node:#f5d7e0">AI 测肤<small>建立信任</small></div>
+              <div class="flow-node" style="--node:#ffe4c5">状态解释<small>顾问话术</small></div>
+              <div class="flow-node" style="--node:#dbe4ff">Skin ID<small>客户资产</small></div>
+              <div class="flow-node" style="--node:#d7f3e6">复购触发<small>运营任务</small></div>
+            </div>
+          </section>
+
+          <section class="right-stack">
+            <article class="card task-card">
+              <div class="task-top">
+                <div class="eyebrow">复购任务</div>
+                <div class="app-tags"><span class="app-tag" style="--app:#f08938;--app-dark:#9a4c12">AI 运营</span></div>
+              </div>
+              <h2>周期提醒</h2>
+              <p>Skin ID 建档、会员分层、复购触发</p>
+              <div class="card-graphic">
+                <div class="graphic-line" style="--app:#f08938;--w:78%"><i></i><span>私域任务</span><em></em></div>
+                <div class="graphic-line" style="--app:#4d7cff;--w:62%"><i></i><span>活动入口</span><em></em></div>
+              </div>
+            </article>
+            <article class="card task-card">
+              <div class="task-top">
+                <div class="eyebrow">招商复制</div>
+                <div class="app-tags"><span class="app-tag" style="--app:#18a873;--app-dark:#0b6b48">AI 招商</span><span class="app-tag" style="--app:#8e63e6;--app-dark:#5932a8">AI 培训</span></div>
+              </div>
+              <h2>标准话术</h2>
+              <p>总部托管、异议处理、门店培训</p>
+              <div class="card-graphic">
+                <div class="graphic-line" style="--app:#18a873;--w:84%"><i></i><span>招商跟进</span><em></em></div>
+                <div class="graphic-line" style="--app:#8e63e6;--w:66%"><i></i><span>顾问训练</span><em></em></div>
+              </div>
+            </article>
+            <article class="card task-card">
+              <div class="task-top">
+                <div class="eyebrow">点位运营</div>
+                <div class="app-tags"><span class="app-tag" style="--app:#4d7cff;--app-dark:#244bb0">AI 引流</span><span class="app-tag" style="--app:#f08938;--app-dark:#9a4c12">AI 运营</span></div>
+              </div>
+              <h2>总部看板</h2>
+              <p>进站、首购、复购和点位复盘</p>
+              <div class="card-graphic">
+                <div class="graphic-line" style="--app:#4d7cff;--w:72%"><i></i><span>获客进站</span><em></em></div>
+                <div class="graphic-line" style="--app:#f08938;--w:88%"><i></i><span>经营复盘</span><em></em></div>
+              </div>
+            </article>
+          </section>
+        </div>
+      </section>
+    </main>
+    <script>
+      (() => {
+        const artboard = document.querySelector(".artboard");
+        if (!artboard) return;
+
+        const fitArtboard = () => {
+          if (window.innerWidth <= 720) {
+            artboard.style.transform = "";
+            fitParentFrame();
+            return;
+          }
+          const scale = Math.min(window.innerWidth / 2360, window.innerHeight / 1320);
+          artboard.style.transform = `scale(${scale})`;
+          fitParentFrame();
+        };
+
+        const fitParentFrame = () => {
+          if (!window.frameElement) return;
+
+          const frameWrap = window.frameElement.closest(".case-flagship-html-frame");
+          if (!frameWrap) return;
+
+          if (window.innerWidth > 720) {
+            frameWrap.style.removeProperty("height");
+            return;
+          }
+
+          requestAnimationFrame(() => {
+            const height = Math.ceil(document.documentElement.scrollHeight);
+            frameWrap.style.height = `${height}px`;
+          });
+        };
+
+        window.addEventListener("resize", fitArtboard);
+        fitArtboard();
+      })();
+    </script>
+  </body>
+</html>

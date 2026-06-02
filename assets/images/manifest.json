@@ -143,23 +143,6 @@
       ]
     },
     {
-      "id": "home-first-flow-scenarios",
-      "page": "home",
-      "path": "assets/images/home/home-first-flow-scenarios.png",
-      "sourceType": "html-css-composition",
-      "size": "2360x1320",
-      "status": "approved-webp-delivery",
-      "source": "assets/images/_source/compositions/home-first-flow-scenarios.html",
-      "latestDraft": "assets/images/home/home-first-flow-scenarios.png",
-      "deliveryFormat": "webp-srcset",
-      "fallback": "assets/images/home/home-first-flow-scenarios.png",
-      "responsive": [
-        "assets/images/home/home-first-flow-scenarios-1280.webp",
-        "assets/images/home/home-first-flow-scenarios-1920.webp",
-        "assets/images/home/home-first-flow-scenarios-2560.webp"
-      ]
-    },
-    {
       "id": "home-lizi-flagship",
       "page": "home",
       "path": "assets/images/home/home-lizi-flagship.png",

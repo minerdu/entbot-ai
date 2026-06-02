@@ -1,0 +1,1579 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>home-skill-agent-method-v3-smalltext-preview</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        background: #fffdf8;
+        color: #111;
+        font-family:
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          "PingFang SC",
+          "Microsoft YaHei",
+          "Noto Sans CJK SC",
+          Arial,
+          sans-serif;
+      }
+
+      body {
+        padding: 40px;
+      }
+
+      .artboard {
+        width: 2360px;
+        height: 1320px;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 80% 14%, rgba(255, 255, 255, 0.48), transparent 22%),
+          linear-gradient(135deg, #f8dce4 0%, #fff0dc 58%, #ffe3c4 100%);
+      }
+
+      .stage {
+        position: relative;
+        width: 2320px;
+        height: 1252px;
+        margin: 34px 20px;
+        overflow: hidden;
+        border-radius: 62px;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .stage::before {
+        position: absolute;
+        inset: 0;
+        opacity: 0.28;
+        background:
+          radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.62) 0 13%, transparent 14%),
+          linear-gradient(130deg, transparent 0 46%, rgba(255, 255, 255, 0.38) 47% 48%, transparent 49%),
+          linear-gradient(35deg, transparent 0 62%, rgba(255, 255, 255, 0.28) 63% 64%, transparent 65%);
+        content: "";
+      }
+
+      .header {
+        position: absolute;
+        top: 96px;
+        left: 116px;
+        right: 116px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 80px;
+        align-items: end;
+      }
+
+      .headline {
+        margin: 0;
+        color: #1f2a36;
+        font-size: 38px;
+        font-weight: 650;
+        line-height: 1.28;
+      }
+
+      .mode-pill {
+        display: grid;
+        grid-auto-flow: column;
+        gap: 8px;
+        padding: 8px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.58);
+        border: 1px solid rgba(35, 35, 35, 0.08);
+      }
+
+      .mode-pill span {
+        padding: 12px 18px;
+        border-radius: 999px;
+        color: #4e5a67;
+        font-size: 20px;
+        font-weight: 760;
+      }
+
+      .mode-pill span:first-child {
+        background: #111;
+        color: #fff;
+      }
+
+      .system {
+        position: absolute;
+        left: 116px;
+        right: 116px;
+        top: 220px;
+        height: 832px;
+        display: grid;
+        grid-template-columns: 430px 1fr 530px;
+        gap: 32px;
+        align-items: stretch;
+      }
+
+      .panel {
+        position: relative;
+        overflow: hidden;
+        border-radius: 34px;
+        border: 1px solid rgba(20, 20, 20, 0.07);
+        background: rgba(255, 255, 255, 0.86);
+        box-shadow: 0 28px 86px rgba(45, 36, 29, 0.12);
+      }
+
+      .dark-panel {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        gap: 28px;
+        padding: 42px 38px;
+        background: #111;
+        color: #fff;
+      }
+
+      .panel-title {
+        margin: 0;
+        font-size: 34px;
+        line-height: 1.16;
+      }
+
+      .panel-note {
+        margin: 12px 0 0;
+        color: #c4d0de;
+        font-size: 21px;
+        line-height: 1.45;
+      }
+
+      .source-grid {
+        display: grid;
+        gap: 14px;
+        align-content: start;
+      }
+
+      .source-card {
+        min-height: 92px;
+        padding: 20px 22px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.055);
+      }
+
+      .source-card strong {
+        display: block;
+        font-size: 24px;
+      }
+
+      .source-card span {
+        display: block;
+        margin-top: 8px;
+        color: #aebed1;
+        font-size: 17px;
+      }
+
+      .target {
+        display: grid;
+        grid-template-columns: 62px 1fr;
+        gap: 16px;
+        align-items: center;
+        min-height: 96px;
+        padding: 18px;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .target i {
+        display: grid;
+        place-items: center;
+        width: 62px;
+        height: 62px;
+        border-radius: 18px;
+        background: #fff;
+        color: #111;
+        font-size: 26px;
+        font-style: normal;
+        font-weight: 850;
+      }
+
+      .target b {
+        display: block;
+        font-size: 23px;
+      }
+
+      .target span {
+        display: block;
+        margin-top: 6px;
+        color: #16d879;
+        font-size: 16px;
+        font-weight: 760;
+      }
+
+      .center {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        gap: 22px;
+        padding: 34px;
+      }
+
+      .center-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 24px;
+      }
+
+      .center-head h2 {
+        margin: 0;
+        font-size: 36px;
+      }
+
+      .center-head span {
+        padding: 11px 16px;
+        border-radius: 999px;
+        background: #f4f1ec;
+        color: #5d6874;
+        font-size: 20px;
+        font-weight: 760;
+      }
+
+      .skill-core {
+        position: relative;
+        display: grid;
+        place-items: center;
+        min-height: 456px;
+        border: 1px solid #ede8df;
+        border-radius: 30px;
+        background:
+          radial-gradient(circle at 50% 50%, rgba(255, 240, 220, 0.9), rgba(255, 255, 255, 0.84) 50%, rgba(255, 255, 255, 0.65));
+      }
+
+      .orbit {
+        position: absolute;
+        border: 2px solid rgba(77, 102, 130, 0.16);
+        border-radius: 999px;
+      }
+
+      .orbit.one {
+        width: 560px;
+        height: 220px;
+        transform: rotate(10deg);
+      }
+
+      .orbit.two {
+        width: 450px;
+        height: 300px;
+        transform: rotate(-16deg);
+      }
+
+      .skill-stack {
+        position: relative;
+        z-index: 2;
+        width: 260px;
+        min-height: 260px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: #17202c;
+        color: #fff;
+        box-shadow: 0 26px 70px rgba(23, 32, 44, 0.28);
+      }
+
+      .skill-stack strong {
+        display: block;
+        font-size: 34px;
+        line-height: 1.1;
+        text-align: center;
+      }
+
+      .skill-stack span {
+        display: block;
+        margin-top: 12px;
+        color: #b7c7d7;
+        font-size: 20px;
+        text-align: center;
+      }
+
+      .method-nodes {
+        position: absolute;
+        inset: 48px 58px;
+      }
+
+      .method-node {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        min-width: 118px;
+        min-height: 64px;
+        padding: 0 18px;
+        border: 1px solid #e8e3da;
+        border-radius: 18px;
+        background: #fff;
+        color: #263241;
+        font-size: 20px;
+        font-weight: 800;
+        box-shadow: 0 12px 34px rgba(40, 32, 24, 0.1);
+      }
+
+      .method-node.n1 { top: 0; left: 50%; transform: translateX(-50%); }
+      .method-node.n2 { top: 44%; right: 0; }
+      .method-node.n3 { bottom: 0; left: 50%; transform: translateX(-50%); }
+      .method-node.n4 { top: 44%; left: 0; }
+
+      .skill-summary {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+
+      .summary-card {
+        min-height: 116px;
+        padding: 20px;
+        border: 1px solid #ebe7df;
+        border-radius: 20px;
+        background: #fff;
+      }
+
+      .summary-card small {
+        display: block;
+        color: #76818d;
+        font-size: 17px;
+        font-weight: 760;
+      }
+
+      .summary-card strong {
+        display: block;
+        margin-top: 13px;
+        font-size: 24px;
+      }
+
+      .summary-card span {
+        display: block;
+        margin-top: 8px;
+        color: #10a465;
+        font-size: 16px;
+        font-weight: 760;
+      }
+
+      .right {
+        display: grid;
+        grid-template-rows: auto auto 1fr;
+        gap: 18px;
+        padding: 34px;
+      }
+
+      .agent-card {
+        display: grid;
+        grid-template-columns: 72px 1fr;
+        gap: 18px;
+        align-items: center;
+        min-height: 150px;
+        padding: 24px 26px;
+        border-radius: 22px;
+        background: #202020;
+        color: #fff;
+      }
+
+      .agent-icon {
+        display: grid;
+        place-items: center;
+        width: 72px;
+        height: 72px;
+        border-radius: 18px;
+        background: #fff;
+        color: #111;
+        font-size: 33px;
+        line-height: 1.12;
+        text-align: center;
+        font-weight: 850;
+      }
+
+      .agent-card h2 {
+        margin: 0;
+        font-size: 34px;
+      }
+
+      .agent-card p {
+        margin: 8px 0 0;
+        color: #16d879;
+        font-size: 21px;
+        line-height: 1.28;
+        font-weight: 760;
+      }
+
+      .action-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .action-grid span {
+        min-height: 64px;
+        display: grid;
+        place-items: center;
+        border-radius: 16px;
+        background: #f7f4ee;
+        color: #263241;
+        font-size: 19px;
+        font-weight: 780;
+      }
+
+      .app-stack {
+        display: grid;
+        gap: 14px;
+        align-content: start;
+      }
+
+      .app-card {
+        display: grid;
+        grid-template-columns: 70px 1fr;
+        gap: 18px;
+        align-items: center;
+        min-height: 92px;
+        padding: 16px 18px;
+        border: 1px solid #ebe7df;
+        border-radius: 22px;
+        background: #fff;
+      }
+
+      .app-icon {
+        display: grid;
+        place-items: center;
+        width: 70px;
+        height: 70px;
+        border-radius: 20px;
+        color: #fff;
+        font-size: 32px;
+        font-weight: 850;
+      }
+
+      .blue { background: #2f6edf; }
+      .green { background: #239b62; }
+      .orange { background: #f28a18; }
+      .purple { background: #7660bf; }
+
+      .app-card h3 {
+        margin: 0;
+        font-size: 25px;
+      }
+
+      .app-card p {
+        margin: 8px 0 0;
+        color: #66717d;
+        font-size: 16px;
+      }
+
+      .flow {
+        position: absolute;
+        left: 210px;
+        right: 210px;
+        bottom: 76px;
+        display: grid;
+        grid-template-columns: auto 1fr auto 1fr auto 1fr auto 1fr auto;
+        gap: 18px;
+        align-items: center;
+      }
+
+      .flow-node {
+        display: grid;
+        grid-template-columns: 54px auto;
+        gap: 14px;
+        align-items: center;
+        color: #253243;
+        font-size: 23px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .flow-node i {
+        display: grid;
+        place-items: center;
+        width: 54px;
+        height: 54px;
+        border-radius: 999px;
+        background: #253243;
+        color: #fff;
+        font-size: 19px;
+        font-style: normal;
+      }
+
+      .flow-line {
+        position: relative;
+        height: 2px;
+        background: rgba(37, 50, 67, 0.34);
+      }
+
+      .flow-line::after {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        width: 12px;
+        height: 12px;
+        border-top: 2px solid rgba(37, 50, 67, 0.44);
+        border-right: 2px solid rgba(37, 50, 67, 0.44);
+        transform: translateY(-50%) rotate(45deg);
+        content: "";
+      }
+
+      /* v2 readability preview: align with approved homepage Hero font scale. */
+      .header {
+        top: 88px;
+        gap: 64px;
+      }
+
+      .headline {
+        font-size: 42px;
+        line-height: 1.24;
+      }
+
+      .mode-pill span {
+        padding: 13px 20px;
+        font-size: 22px;
+      }
+
+      .system {
+        top: 204px;
+        height: 884px;
+        grid-template-columns: 470px minmax(0, 1fr) 560px;
+        gap: 34px;
+      }
+
+      .dark-panel {
+        gap: 26px;
+        padding: 42px 40px;
+      }
+
+      .panel-title {
+        font-size: 42px;
+      }
+
+      .panel-note {
+        margin-top: 14px;
+        font-size: 26px;
+        line-height: 1.34;
+      }
+
+      .source-grid {
+        gap: 16px;
+      }
+
+      .source-card {
+        min-height: 132px;
+        padding: 23px 24px;
+      }
+
+      .source-card strong {
+        font-size: 29px;
+      }
+
+      .source-card span {
+        margin-top: 10px;
+        font-size: 24px;
+        line-height: 1.32;
+      }
+
+      .target {
+        grid-template-columns: 68px 1fr;
+        min-height: 112px;
+        padding: 20px;
+      }
+
+      .target i {
+        width: 68px;
+        height: 68px;
+        font-size: 29px;
+      }
+
+      .target b {
+        font-size: 28px;
+      }
+
+      .target span {
+        margin-top: 8px;
+        font-size: 24px;
+        line-height: 1.24;
+      }
+
+      .center {
+        gap: 24px;
+        padding: 34px;
+      }
+
+      .center-head h2 {
+        font-size: 42px;
+        line-height: 1.08;
+      }
+
+      .center-head span {
+        padding: 12px 16px;
+        font-size: 22px;
+        white-space: nowrap;
+      }
+
+      .skill-core {
+        min-height: 470px;
+      }
+
+      .skill-stack {
+        width: 284px;
+        min-height: 284px;
+      }
+
+      .skill-stack strong {
+        font-size: 40px;
+      }
+
+      .skill-stack span {
+        margin-top: 14px;
+        font-size: 23px;
+      }
+
+      .orbit.one {
+        width: 590px;
+        height: 232px;
+      }
+
+      .orbit.two {
+        width: 476px;
+        height: 318px;
+      }
+
+      .method-nodes {
+        inset: 46px 56px;
+      }
+
+      .method-node {
+        min-width: 132px;
+        min-height: 72px;
+        padding: 0 20px;
+        font-size: 24px;
+      }
+
+      .skill-summary {
+        gap: 16px;
+      }
+
+      .summary-card {
+        min-height: 128px;
+        padding: 20px;
+      }
+
+      .summary-card small {
+        font-size: 20px;
+      }
+
+      .summary-card strong {
+        margin-top: 12px;
+        font-size: 29px;
+      }
+
+      .summary-card span {
+        margin-top: 8px;
+        font-size: 23px;
+      }
+
+      .right {
+        gap: 14px;
+        padding: 34px;
+      }
+
+      .agent-card {
+        grid-template-columns: 76px 1fr;
+        gap: 19px;
+        min-height: 156px;
+        padding: 22px 24px;
+      }
+
+      .agent-icon {
+        width: 76px;
+        height: 76px;
+        font-size: 34px;
+      }
+
+      .agent-card h2 {
+        font-size: 29px;
+      }
+
+      .agent-card p {
+        margin-top: 8px;
+        font-size: 22px;
+        line-height: 1.27;
+      }
+
+      .action-grid {
+        gap: 12px;
+      }
+
+      .action-grid span {
+        min-height: 64px;
+        font-size: 25px;
+      }
+
+      .app-stack {
+        gap: 12px;
+      }
+
+      .app-card {
+        grid-template-columns: 72px 1fr;
+        gap: 17px;
+        min-height: 106px;
+        padding: 17px 18px;
+      }
+
+      .app-icon {
+        width: 72px;
+        height: 72px;
+        font-size: 33px;
+      }
+
+      .app-card h3 {
+        font-size: 29px;
+      }
+
+      .app-card p {
+        margin-top: 9px;
+        font-size: 22px;
+        line-height: 1.24;
+      }
+
+      .flow {
+        left: 184px;
+        right: 184px;
+        bottom: 42px;
+        gap: 18px;
+      }
+
+      .flow-node {
+        grid-template-columns: 58px auto;
+        gap: 15px;
+        font-size: 26px;
+      }
+
+      .flow-node i {
+        width: 58px;
+        height: 58px;
+        font-size: 21px;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        margin: 0;
+        overflow: hidden;
+        background: transparent;
+      }
+
+      body {
+        display: block;
+        padding: 0;
+      }
+
+      .artboard {
+        transform-origin: top left;
+      }
+
+      @media (max-width: 720px) {
+        html,
+        body {
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          background: transparent;
+        }
+
+        .artboard {
+          width: 100%;
+          height: 100%;
+          transform: none !important;
+        }
+
+        .stage {
+          position: relative;
+          inset: auto;
+          width: 100%;
+          height: 100%;
+          padding: 16px;
+          border-radius: 0;
+          overflow: hidden;
+        }
+
+        .header {
+          grid-template-columns: 1fr;
+          gap: 12px;
+          padding: 0;
+        }
+
+        .headline {
+          font-size: 20px;
+          line-height: 1.35;
+          text-align: left;
+        }
+
+        .mode-pill {
+          justify-self: start;
+          min-height: 36px;
+          padding: 4px;
+          font-size: 12px;
+        }
+
+        .system {
+          grid-template-columns: 1fr;
+          gap: 12px;
+          margin-top: 14px;
+        }
+
+        .panel {
+          min-height: auto;
+          padding: 16px;
+          border-radius: 18px;
+        }
+
+        .panel-title,
+        .center-head h2,
+        .agent-card h2 {
+          font-size: 23px;
+          line-height: 1.14;
+        }
+
+        .panel-note,
+        .agent-card p,
+        .app-card p {
+          font-size: 14px;
+          line-height: 1.45;
+        }
+
+        .source-grid {
+          grid-template-columns: 1fr;
+          gap: 8px;
+          margin-top: 14px;
+        }
+
+        .source-card {
+          min-height: auto;
+          padding: 10px;
+          border-radius: 12px;
+        }
+
+        .source-card strong,
+        .target b {
+          font-size: 15px;
+        }
+
+        .source-card span,
+        .target span {
+          font-size: 12px;
+          line-height: 1.35;
+        }
+
+        .target {
+          margin-top: 12px;
+          padding: 10px;
+          border-radius: 14px;
+        }
+
+        .center {
+          order: 2;
+        }
+
+        .skill-core {
+          min-height: 150px;
+          margin-top: 12px;
+        }
+
+        .orbit,
+        .method-nodes {
+          display: none;
+        }
+
+        .skill-stack {
+          position: static;
+          width: 100%;
+          height: auto;
+          min-height: 88px;
+          transform: none;
+          border-radius: 18px;
+        }
+
+        .skill-stack div strong {
+          font-size: 22px;
+        }
+
+        .skill-summary {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 8px;
+          margin-top: 12px;
+        }
+
+        .summary-card {
+          min-height: 68px;
+          padding: 9px;
+          border-radius: 12px;
+        }
+
+        .summary-card strong {
+          font-size: 13px;
+        }
+
+        .summary-card span {
+          font-size: 10px;
+        }
+
+        .right {
+          order: 3;
+        }
+
+        .agent-card {
+          grid-template-columns: 48px 1fr;
+          gap: 12px;
+          padding: 12px;
+          border-radius: 16px;
+        }
+
+        .agent-icon {
+          width: 48px;
+          height: 48px;
+          font-size: 22px;
+        }
+
+        .action-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+          margin-top: 12px;
+        }
+
+        .action-grid span {
+          min-height: 38px;
+          border-radius: 12px;
+          font-size: 13px;
+        }
+
+        .app-stack {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+          margin-top: 12px;
+        }
+
+        .app-card {
+          min-height: 68px;
+          padding: 10px;
+          border-radius: 12px;
+        }
+
+        .app-card h3 {
+          font-size: 14px;
+        }
+
+        .app-card p {
+          display: none;
+        }
+
+        .flow {
+          grid-template-columns: 1fr;
+          gap: 8px;
+          margin-top: 12px;
+        }
+
+        .flow-line {
+          display: none;
+        }
+
+        .flow-node {
+          min-height: 34px;
+          justify-content: start;
+          padding: 7px 10px;
+          border-radius: 12px;
+        }
+
+        .flow-node i {
+          width: 24px;
+          height: 24px;
+          font-size: 11px;
+        }
+
+        .flow-node span {
+          font-size: 12px;
+        }
+      }
+
+      @media (max-width: 720px) {
+        html,
+        body {
+          width: 100%;
+          height: auto;
+          min-height: 0;
+          overflow: visible;
+          background: transparent;
+        }
+
+        body {
+          display: block;
+          padding: 0;
+        }
+
+        .artboard {
+          width: 100%;
+          height: auto;
+          min-height: 0;
+          overflow: visible;
+          transform: none !important;
+          background: linear-gradient(135deg, #f9e2e6 0%, #fff0df 58%, #ffe1bd 100%);
+        }
+
+        .stage {
+          position: static;
+          width: 100%;
+          height: auto;
+          margin: 0;
+          padding: 30px 16px 30px;
+          overflow: visible;
+          border-radius: 0;
+        }
+
+        .stage::before,
+        .header {
+          display: none !important;
+        }
+
+        .system {
+          position: static;
+          width: 100%;
+          height: auto;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 16px;
+          margin: 0;
+          align-items: stretch;
+        }
+
+        .panel {
+          width: 100%;
+          min-height: 0;
+          overflow: hidden;
+          border-radius: 22px;
+          box-shadow: 0 18px 46px rgba(45, 36, 29, 0.1);
+        }
+
+        .dark-panel {
+          display: grid;
+          grid-template-rows: auto auto auto;
+          gap: 16px;
+          padding: 22px 20px 20px;
+          background: #111;
+          color: #fff;
+        }
+
+        .panel-title {
+          font-size: 22px;
+          line-height: 1.16;
+        }
+
+        .panel-note {
+          margin-top: 10px;
+          color: #c4d0de;
+          font-size: 15px;
+          line-height: 1.45;
+        }
+
+        .source-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 12px;
+          margin-top: 0;
+        }
+
+        .source-card {
+          min-height: 80px;
+          padding: 14px 16px;
+          border-radius: 16px;
+          background: rgba(255, 255, 255, 0.06);
+        }
+
+        .source-card strong {
+          font-size: 18px;
+          line-height: 1.22;
+        }
+
+        .source-card span {
+          margin-top: 8px;
+          color: #b6c5d6;
+          font-size: 14px;
+          line-height: 1.45;
+        }
+
+        .target {
+          grid-template-columns: 48px 1fr;
+          gap: 12px;
+          min-height: 76px;
+          margin-top: 8px;
+          padding: 14px;
+          border-radius: 16px;
+          background: rgba(255, 255, 255, 0.09);
+        }
+
+        .target i {
+          width: 48px;
+          height: 48px;
+          border-radius: 13px;
+          font-size: 20px;
+        }
+
+        .target b {
+          font-size: 17px;
+          line-height: 1.2;
+        }
+
+        .target span {
+          margin-top: 5px;
+          color: #16d879;
+          font-size: 14px;
+          line-height: 1.28;
+        }
+
+        .center {
+          display: grid;
+          grid-template-rows: auto auto auto;
+          gap: 14px;
+          padding: 20px 18px 18px;
+          background: rgba(255, 255, 255, 0.91);
+        }
+
+        .center-head {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) auto;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 8px;
+        }
+
+        .center-head h2 {
+          margin: 0;
+          font-size: clamp(20px, 3.9vw, 24px);
+          line-height: 1.14;
+          letter-spacing: -0.03em;
+          white-space: nowrap;
+        }
+
+        .center-head span {
+          padding: 8px 10px;
+          border-radius: 999px;
+          background: #f4f1ec;
+          color: #5d6874;
+          font-size: 13px;
+          line-height: 1.2;
+          white-space: nowrap;
+        }
+
+        .skill-core {
+          position: relative;
+          display: grid;
+          place-items: center;
+          min-height: 310px;
+          margin-top: 0;
+          border-radius: 18px;
+          background:
+            radial-gradient(circle at 50% 50%, rgba(255, 241, 220, 0.88), rgba(255, 255, 255, 0.84) 50%, rgba(255, 255, 255, 0.68));
+        }
+
+        .orbit {
+          display: block;
+        }
+
+        .orbit.one {
+          width: 340px;
+          height: 136px;
+          transform: rotate(10deg);
+        }
+
+        .orbit.two {
+          width: 282px;
+          height: 190px;
+          transform: rotate(-16deg);
+        }
+
+        .method-nodes {
+          position: absolute;
+          inset: 34px 24px;
+          display: block;
+          z-index: 3;
+        }
+
+        .method-node {
+          min-width: 86px;
+          min-height: 50px;
+          padding: 0 10px;
+          border-radius: 12px;
+          font-size: 15px;
+        }
+
+        .skill-stack {
+          position: relative;
+          z-index: 2;
+          width: 144px;
+          min-height: 144px;
+          border-radius: 50%;
+          transform: none;
+        }
+
+        .skill-stack strong {
+          font-size: 24px;
+          line-height: 1.1;
+        }
+
+        .skill-stack span {
+          margin-top: 8px;
+          font-size: 14px;
+        }
+
+        .skill-summary {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 10px;
+          margin-top: 0;
+        }
+
+        .summary-card {
+          min-height: 100px;
+          padding: 14px;
+          border-radius: 12px;
+        }
+
+        .summary-card small {
+          font-size: 14px;
+        }
+
+        .summary-card strong {
+          margin-top: 10px;
+          font-size: 20px;
+          line-height: 1.18;
+        }
+
+        .summary-card span {
+          margin-top: 8px;
+          font-size: 15px;
+          line-height: 1.2;
+        }
+
+        .right {
+          display: grid;
+          grid-template-rows: auto auto auto;
+          gap: 10px;
+          padding: 18px;
+          background: rgba(255, 255, 255, 0.91);
+        }
+
+        .agent-card {
+          grid-template-columns: 52px 1fr;
+          gap: 12px;
+          min-height: 0;
+          padding: 14px;
+          border-radius: 14px;
+        }
+
+        .agent-icon {
+          width: 52px;
+          height: 52px;
+          border-radius: 14px;
+          font-size: 25px;
+        }
+
+        .agent-card h2 {
+          font-size: 21px;
+          line-height: 1.16;
+        }
+
+        .agent-card p {
+          margin-top: 8px;
+          font-size: 15px;
+          line-height: 1.35;
+        }
+
+        .action-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+          margin-top: 0;
+        }
+
+        .action-grid span {
+          min-height: 46px;
+          border-radius: 12px;
+          font-size: 16px;
+        }
+
+        .app-stack {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 10px;
+          margin-top: 0;
+        }
+
+        .app-card {
+          grid-template-columns: 46px 1fr;
+          gap: 11px;
+          min-height: 64px;
+          padding: 10px;
+          border-radius: 14px;
+        }
+
+        .app-icon {
+          width: 46px;
+          height: 46px;
+          border-radius: 13px;
+          font-size: 21px;
+        }
+
+        .app-card h3 {
+          font-size: 19px;
+          line-height: 1.16;
+        }
+
+        .app-card p {
+          display: block;
+          margin-top: 5px;
+          font-size: 13px;
+          line-height: 1.28;
+        }
+
+        .flow {
+          position: static;
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+          margin-top: 16px;
+          padding: 0;
+          border-radius: 18px;
+        }
+
+        .flow-line {
+          display: none;
+        }
+
+        .flow-node {
+          display: grid;
+          grid-template-columns: 38px 1fr;
+          gap: 10px;
+          align-items: center;
+          min-height: 56px;
+          padding: 8px 12px;
+          border-radius: 14px;
+          background: rgba(255, 255, 255, 0.6);
+          color: #253243;
+          font-size: 16px;
+          line-height: 1.2;
+          white-space: normal;
+        }
+
+        .flow-node:last-child {
+          grid-column: 1 / -1;
+        }
+
+        .flow-node i {
+          width: 38px;
+          height: 38px;
+          font-size: 15px;
+        }
+
+        .flow-node span {
+          font-size: 16px;
+          line-height: 1.2;
+        }
+      }
+
+      @media (max-width: 430px) {
+        .stage {
+          padding: 30px 14px 30px;
+        }
+
+        .dark-panel {
+          padding: 20px 18px;
+        }
+
+        .panel-note {
+          font-size: 14px;
+        }
+
+        .source-card span {
+          font-size: 14px;
+        }
+
+        .center-head h2 {
+          font-size: 19px;
+        }
+
+        .center-head span {
+          padding: 7px 8px;
+          font-size: 10px;
+        }
+
+        .skill-core {
+          min-height: 300px;
+        }
+
+        .orbit.one {
+          width: 312px;
+          height: 126px;
+        }
+
+        .orbit.two {
+          width: 258px;
+          height: 174px;
+        }
+
+        .method-nodes {
+          inset: 32px 10px;
+        }
+
+        .method-node {
+          min-width: 78px;
+          min-height: 48px;
+          font-size: 14px;
+        }
+
+        .skill-stack {
+          width: 126px;
+          min-height: 126px;
+        }
+
+        .skill-stack strong {
+          font-size: 22px;
+        }
+
+        .summary-card {
+          padding: 12px;
+        }
+
+        .summary-card strong {
+          font-size: 18px;
+        }
+
+        .summary-card span {
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section class="artboard" data-id="method">
+      <div class="stage">
+        <div class="header">
+          <p class="headline">先把行业标杆企业的最佳实践拆成 Skill，再结合企业现状做私有化适配</p>
+          <div class="mode-pill" aria-hidden="true"><span>标杆 Skill</span><span>企业适配</span></div>
+        </div>
+
+        <div class="system">
+          <aside class="panel dark-panel">
+            <div>
+              <h2 class="panel-title">行业标杆输入</h2>
+              <p class="panel-note">先把领先企业的成熟打法拆成可对标、可执行的业务标准。</p>
+            </div>
+            <div class="source-grid">
+              <div class="source-card"><strong>标杆案例</strong><span>行业领先企业、客户指定案例、成功项目</span></div>
+              <div class="source-card"><strong>最佳实践</strong><span>SOP、话术、知识库、审批边界</span></div>
+              <div class="source-card"><strong>评分标准</strong><span>关键指标、成功口径、风险红线</span></div>
+            </div>
+            <div class="target">
+              <i>企</i>
+              <div><b>企业适配</b><span>结合现状、团队经验和业务约束</span></div>
+            </div>
+          </aside>
+
+          <main class="panel center">
+            <div class="center-head">
+              <h2>Benchmark Skill 资产库</h2>
+              <span>可对标 · 可执行 · 可适配</span>
+            </div>
+            <div class="skill-core">
+              <div class="orbit one"></div>
+              <div class="orbit two"></div>
+              <div class="method-nodes">
+                <div class="method-node n1">标杆案例</div>
+                <div class="method-node n2">差距诊断</div>
+                <div class="method-node n3">经营方法包</div>
+                <div class="method-node n4">成功指标</div>
+              </div>
+              <div class="skill-stack">
+                <div><strong>Benchmark<br />Skill</strong><span>标杆能力拆解</span></div>
+              </div>
+            </div>
+            <div class="skill-summary">
+              <div class="summary-card"><small>01</small><strong>对标标准</strong><span>差距可判断</span></div>
+              <div class="summary-card"><small>02</small><strong>执行动作</strong><span>打法可落地</span></div>
+              <div class="summary-card"><small>03</small><strong>私有适配</strong><span>团队可使用</span></div>
+            </div>
+          </main>
+
+          <aside class="panel right">
+            <div class="agent-card">
+              <div class="agent-icon">S</div>
+              <div>
+                <h2>Skill 调用</h2>
+                <p>根据目标和企业现状调用标杆企业 Skill，生成工作流，并执行任务。</p>
+              </div>
+            </div>
+            <div class="action-grid">
+              <span>工作流生成</span>
+              <span>任务编排</span>
+              <span>任务执行</span>
+              <span>结果复盘</span>
+            </div>
+            <div class="app-stack">
+              <div class="app-card"><div class="app-icon blue">引</div><div><h3>AI 引流</h3><p>内容选题、素材生成、账号发布</p></div></div>
+              <div class="app-card"><div class="app-icon green">招</div><div><h3>AI 招商</h3><p>线索分层、商机推进、审批确认</p></div></div>
+              <div class="app-card"><div class="app-icon orange">运</div><div><h3>AI 运营</h3><p>客户分组、任务协同、经营复盘</p></div></div>
+              <div class="app-card"><div class="app-icon purple">训</div><div><h3>AI 培训</h3><p>知识沉淀、实战训练、岗位复核</p></div></div>
+            </div>
+          </aside>
+        </div>
+
+        <div class="flow">
+          <div class="flow-node"><i>1</i><span>行业标杆Skill</span></div>
+          <span class="flow-line" aria-hidden="true"></span>
+          <div class="flow-node"><i>2</i><span>企业适配</span></div>
+          <span class="flow-line" aria-hidden="true"></span>
+          <div class="flow-node"><i>3</i><span>Skill调用</span></div>
+          <span class="flow-line" aria-hidden="true"></span>
+          <div class="flow-node"><i>4</i><span>AI APP执行</span></div>
+          <span class="flow-line" aria-hidden="true"></span>
+          <div class="flow-node"><i>5</i><span>结果复盘</span></div>
+        </div>
+      </div>
+    </section>
+    <script>
+      (() => {
+        const artboard = document.querySelector(".artboard");
+        if (!artboard) return;
+
+        const fitArtboard = () => {
+          if (window.innerWidth <= 720) {
+            artboard.style.transform = "";
+            fitParentFrame();
+            return;
+          }
+          const scale = Math.min(window.innerWidth / 2360, window.innerHeight / 1320);
+          artboard.style.transform = `scale(${scale})`;
+          fitParentFrame();
+        };
+
+        const fitParentFrame = () => {
+          if (!window.frameElement) return;
+
+          const frameWrap = window.frameElement.closest(".method-html-frame");
+          if (!frameWrap) return;
+
+          if (window.innerWidth > 720) {
+            frameWrap.style.removeProperty("height");
+            return;
+          }
+
+          requestAnimationFrame(() => {
+            const height = Math.ceil(artboard.getBoundingClientRect().height);
+            frameWrap.style.height = `${height}px`;
+          });
+        };
+
+        window.addEventListener("resize", fitArtboard);
+        fitArtboard();
+      })();
+    </script>
+  </body>
+</html>
