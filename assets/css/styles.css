@@ -26207,6 +26207,254 @@ body.service-page .main {
   }
 }
 
+/* Contact AI advisor: full-width, light conversation surface inspired by Claude's chat layout. */
+.contact-page .contact-ai-section {
+  padding-top: 18px;
+  padding-bottom: 132px;
+}
+
+.contact-page .contact-ai-priority-layout {
+  width: min(var(--wide), calc(100% - 48px));
+}
+
+.contact-page .contact-chat-primary {
+  width: 100%;
+}
+
+.contact-page .contact-chat-panel.contact-chat-primary .contact-ai-chat {
+  display: grid;
+  grid-template-rows: auto auto auto;
+  width: 100%;
+  min-height: 0;
+  height: auto;
+  overflow: visible;
+  border: 1px solid rgba(20, 20, 20, 0.08);
+  border-radius: 30px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92)),
+    var(--paper);
+  color: var(--ink);
+  box-shadow: 0 34px 100px rgba(35, 31, 25, 0.11);
+}
+
+.contact-page .contact-ai-chat .chat-window-head {
+  padding: 30px 34px 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.contact-page .contact-ai-chat .chat-window-head h2 {
+  color: var(--ink);
+  font-size: clamp(26px, 2.5vw, 36px);
+}
+
+.contact-page .contact-ai-chat .chat-kicker {
+  color: var(--muted-2);
+}
+
+.contact-page .contact-ai-chat .chat-status {
+  border-color: rgba(7, 193, 96, 0.24);
+  background: rgba(7, 193, 96, 0.08);
+  color: #087a42;
+}
+
+.contact-page .contact-chat-panel.contact-chat-primary .contact-ai-chat .chat-messages {
+  gap: 18px;
+  min-height: 320px;
+  max-height: none;
+  padding: 30px 34px 22px;
+  overflow: visible;
+}
+
+.contact-page .contact-ai-chat .chat-message {
+  max-width: min(820px, 86%);
+}
+
+.contact-page .contact-ai-chat .chat-message.bot {
+  align-self: flex-start;
+}
+
+.contact-page .contact-ai-chat .chat-message.user {
+  align-self: flex-end;
+}
+
+.contact-page .contact-ai-chat .chat-bubble {
+  padding: 16px 18px;
+  border: 1px solid rgba(20, 20, 20, 0.07);
+  border-radius: 18px;
+  background: #f4f1eb;
+  color: var(--ink-soft);
+  font-size: 16px;
+  line-height: 1.72;
+  box-shadow: none;
+}
+
+.contact-page .contact-ai-chat .chat-message.user .chat-bubble {
+  border-color: rgba(7, 193, 96, 0.2);
+  background: #e4f8ef;
+  color: #0d3a24;
+}
+
+.contact-page .contact-ai-chat .chat-message[data-chat-pending="true"] .chat-bubble {
+  color: var(--ink-soft);
+}
+
+.contact-page .contact-ai-chat .chat-speaker {
+  margin-bottom: 6px;
+  color: #087a42;
+}
+
+.contact-page .contact-ai-chat .chat-loading-current {
+  color: var(--ink-soft);
+}
+
+.contact-page .contact-ai-chat .chat-loading-meta,
+.contact-page .contact-ai-chat .chat-loading-step {
+  color: var(--muted);
+}
+
+.contact-page .contact-ai-chat .chat-loading-progress {
+  background: rgba(20, 20, 20, 0.09);
+}
+
+.contact-page .contact-ai-chat .chat-loading-step.is-done {
+  color: var(--muted);
+}
+
+.contact-page .contact-ai-chat .chat-loading-step.is-active {
+  color: var(--ink);
+}
+
+.contact-page .contact-ai-chat .chat-quick-actions {
+  padding: 6px 34px 18px;
+}
+
+.contact-page .contact-ai-chat .chat-quick-actions button {
+  min-height: 40px;
+  padding: 8px 14px;
+  border-color: rgba(20, 20, 20, 0.1);
+  background: #f6f3ed;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.contact-page .contact-ai-chat .chat-quick-actions button:hover {
+  border-color: rgba(37, 99, 235, 0.32);
+  background: #eef3ff;
+  color: var(--ink);
+}
+
+.contact-page .contact-ai-chat .chat-quick-actions button[data-chat-deep="true"] {
+  border-color: rgba(37, 99, 235, 0.34);
+  background: var(--blue-soft);
+  color: #123174;
+}
+
+.contact-page .contact-ai-chat .chat-input-row {
+  gap: 12px;
+  margin: 0 34px 34px;
+  padding: 14px;
+  border: 1px solid rgba(20, 20, 20, 0.08);
+  border-radius: 24px;
+  background: #f7f3ed;
+}
+
+.contact-page .contact-ai-chat .chat-input-row input {
+  min-height: 54px;
+  border-color: transparent;
+  background: #fff;
+  color: var(--ink);
+  font-size: 16px;
+}
+
+.contact-page .contact-ai-chat .chat-input-row input::placeholder {
+  color: var(--muted-2);
+}
+
+.contact-page .contact-ai-chat .chat-input-row button {
+  min-height: 54px;
+  padding: 0 22px;
+  background: var(--ink);
+  color: #fff;
+}
+
+@media (max-width: 720px) {
+  .contact-page .display-title.page-title {
+    font-size: clamp(38px, 13vw, 52px);
+    line-height: 1.12;
+    overflow-wrap: anywhere;
+  }
+
+  .contact-page .hero-lede {
+    width: min(100%, 340px);
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 15px;
+  }
+
+  .contact-page .contact-ai-section {
+    padding-top: 0;
+    padding-bottom: 96px;
+  }
+
+  .contact-page .contact-ai-priority-layout {
+    width: min(100% - 32px, var(--wide));
+  }
+
+  .contact-page .contact-chat-primary {
+    width: 100%;
+  }
+
+  .contact-page .contact-chat-panel.contact-chat-primary .contact-ai-chat {
+    border-radius: 24px;
+  }
+
+  .contact-page .contact-ai-chat .chat-window-head {
+    padding: 22px 18px 14px;
+  }
+
+  .contact-page .contact-chat-panel.contact-chat-primary .contact-ai-chat .chat-messages {
+    min-height: 260px;
+    padding: 22px 18px 16px;
+  }
+
+  .contact-page .contact-ai-chat .chat-message {
+    max-width: 94%;
+  }
+
+  .contact-page .contact-ai-chat .chat-bubble {
+    padding: 14px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .contact-page .contact-ai-chat .chat-quick-actions {
+    padding: 4px 18px 14px;
+  }
+
+  .contact-page .contact-ai-chat .chat-quick-actions button {
+    min-height: 38px;
+    padding: 7px 12px;
+  }
+
+  .contact-page .contact-ai-chat .chat-input-row {
+    grid-template-columns: 1fr;
+    margin: 0 18px 20px;
+    padding: 12px;
+    border-radius: 20px;
+  }
+
+  .contact-page .contact-ai-chat .chat-input-row input,
+  .contact-page .contact-ai-chat .chat-input-row button {
+    min-height: 48px;
+  }
+
+  .contact-page .contact-final-cta .section-title {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+
 /* Particle case: AI skin report tab final layout. */
 .particle-growth-lab .case-tab-copy.lizi-report-insight {
   align-content: stretch;
@@ -38202,5 +38450,26 @@ body.service-page .main {
   .legal-standard-page h2 {
     font-size: clamp(24px, 8vw, 30px);
     line-height: 1.16;
+  }
+}
+
+@media (max-width: 760px) {
+  .contact-page .hero-narrow {
+    width: min(100% - 32px, 360px);
+  }
+
+  .contact-page .display-title.page-title {
+    max-width: 340px;
+    margin-inline: auto;
+    font-size: clamp(34px, 9.2vw, 38px);
+    line-height: 1.16;
+    white-space: normal;
+    text-wrap: balance;
+    overflow-wrap: normal;
+  }
+
+  .contact-page .contact-final-cta .section-title {
+    white-space: normal;
+    overflow-wrap: normal;
   }
 }
