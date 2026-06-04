@@ -255,7 +255,7 @@ const chatQuickPrompts = {
   product: "帮我判断适合哪个 AI APP",
   case: "我想了解类似案例",
   privacy: "我想了解隐私政策",
-  deepDiagnosis: "我想做一次完整诊断，请帮我判断增长卡点，再拆解 AI 解决方案和落地步骤"
+  deepDiagnosis: "请帮我做一次诊断判断：我真正卡在哪个增长环节，应该优先用哪类 AI APP 切入？"
 };
 
 const chatInputPlaceholders = {
@@ -343,12 +343,22 @@ function compactChatValue(text) {
 function isDeepDiagnosisRequest(text, options = {}) {
   if (options.deepDiagnosis) return true;
   const value = compactChatValue(text);
-  return /详细方案|完整方案|完整诊断|深度诊断|完整分析|深度分析|帮我拆解|详细拆解|系统拆解|系统方案|全面诊断|完整规划|deepdiagnosis|deepdiagnose/i.test(value);
+  return /深度诊断|诊断判断|真正卡在哪|卡在哪个增长环节|优先用哪类ai|优先用哪个ai|优先切入|增长卡点|deepdiagnosis|deepdiagnose/i.test(value);
+}
+
+function isLongPlanRequest(text, options = {}) {
+  if (options.longPlan) return true;
+  const value = compactChatValue(text);
+  return /详细方案|完整方案|详细报告|完整报告|系统方案|完整规划|实施计划书|写一份方案|longplan/i.test(value);
 }
 
 function getChatLoadingMessage(text, intent, options = {}) {
+  if (isLongPlanRequest(text, options)) {
+    return "我正在整理完整方案...";
+  }
+
   if (isDeepDiagnosisRequest(text, options)) {
-    return "正在做完整分析，可能需要 10-20 秒。";
+    return "我正在判断关键增长卡点...";
   }
 
   const value = compactChatValue(text);
@@ -554,10 +564,11 @@ async function requestAiReply(widget, text, intent, options = {}) {
 
   const history = Array.isArray(widget._chatHistory) ? widget._chatHistory.slice(-10) : [];
   const deepDiagnosis = isDeepDiagnosisRequest(text, options);
+  const longPlan = isLongPlanRequest(text, options);
   const response = await fetch("/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: text, intent, history, deepDiagnosis })
+    body: JSON.stringify({ message: text, intent, history, deepDiagnosis, longPlan })
   });
 
   if (!response.ok) {
@@ -574,15 +585,16 @@ async function submitChatPrompt(widget, text, options = {}) {
   if (!value) return;
   const intent = widget.getAttribute("data-chat-intent") || "diagnosis";
   const deepDiagnosis = isDeepDiagnosisRequest(value, options);
+  const longPlan = isLongPlanRequest(value, options);
   appendChatMessage(widget, "user", value);
 
   widget._chatHistory = Array.isArray(widget._chatHistory) ? widget._chatHistory : [];
   widget._chatHistory.push({ role: "user", content: value });
 
-  const pending = appendChatMessage(widget, "bot", getChatLoadingMessage(value, intent, { deepDiagnosis }), { pending: true });
+  const pending = appendChatMessage(widget, "bot", getChatLoadingMessage(value, intent, { deepDiagnosis, longPlan }), { pending: true });
 
   try {
-    const reply = await requestAiReply(widget, value, intent, { deepDiagnosis });
+    const reply = await requestAiReply(widget, value, intent, { deepDiagnosis, longPlan });
     if (!reply) throw new Error("AI 服务没有返回有效内容");
     const finalReply = normalizeChatReply(reply);
     updateChatReplyMessages(widget, pending, finalReply);
@@ -618,8 +630,9 @@ function initChatWidget(widget) {
     button.addEventListener("click", () => {
       const intent = button.getAttribute("data-chat-intent");
       const deepDiagnosis = button.getAttribute("data-chat-deep") === "true";
+      const longPlan = button.getAttribute("data-chat-long-plan") === "true";
       if (intent) widget.setAttribute("data-chat-intent", intent);
-      submitChatPrompt(widget, button.getAttribute("data-chat-prompt") || button.textContent, { deepDiagnosis });
+      submitChatPrompt(widget, button.getAttribute("data-chat-prompt") || button.textContent, { deepDiagnosis, longPlan });
     });
   });
 }

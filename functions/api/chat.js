@@ -31,22 +31,40 @@ function readPositiveNumber(value, fallback) {
 
 function isDeepDiagnosticRequest(message) {
   const value = String(message || "").replace(/\s+/g, "").toLowerCase();
-  return /详细方案|完整方案|完整诊断|深度诊断|完整分析|深度分析|帮我拆解|详细拆解|系统拆解|系统方案|全面诊断|完整规划|deepdiagnosis|deepdiagnose/i.test(value);
+  return /深度诊断|诊断判断|真正卡在哪|卡在哪个增长环节|优先用哪类ai|优先用哪个ai|优先切入|增长卡点|deepdiagnosis|deepdiagnose/i.test(value);
+}
+
+function isLongPlanRequest(message) {
+  const value = String(message || "").replace(/\s+/g, "").toLowerCase();
+  return /详细方案|完整方案|详细报告|完整报告|系统方案|完整规划|实施计划书|写一份方案|longplan/i.test(value);
 }
 
 function buildTurnPolicy(history, message, options = {}) {
   const lastAssistant = [...history].reverse().find((item) => item && item.role === "assistant" && item.content);
   const lastAssistantAsked = /[?？]/.test(String(lastAssistant?.content || ""));
 
-  if (options.deepDiagnosis) {
+  if (options.longPlan) {
     return [
       "## 本轮强制规则",
-      "用户正在请求详细方案或完整诊断，本轮允许做深度诊断。",
+      "用户正在请求详细方案或完整报告，本轮允许输出较完整的方案。",
       "不要输出思考过程、reasoning_content、内部推理或模型参数，只输出适合官网访客阅读的最终答案。",
       "请基于最近上下文和当前问题，按“需求判断 -> 优先卡点 -> AI 解决方案 -> 落地步骤 -> 服务/合作建议”的思路回答。",
       "方案要结合蔚为的 AI 引流、AI 招商、AI 运营、AI 培训、Agent、Skill 和 AI APP 工作流。",
       "如果信息不足，先给可判断部分，最后只列最多 3 个必须补充的问题；不要把整篇回复变成问卷。",
       "回复要具体、可执行，优先控制在 700-1200 个中文字符。"
+    ].join("\n");
+  }
+
+  if (options.deepDiagnosis) {
+    return [
+      "## 本轮强制规则",
+      "用户请求的是洞察式诊断，不是长篇报告。不要把深度理解成字数更多。",
+      "本轮必须给出一个明确判断：客户表面问题是什么，背后更可能卡在哪个增长环节。",
+      "必须说明为什么优先从这个环节切入，而不是平均展开所有产品。",
+      "必须推荐一个最优先的 AI APP 或 AI 工作流切口，并说明它负责解决哪一段业务动作。",
+      "可以提到第二优先级，但不能写成产品清单。",
+      "如果信息不足，也要先基于常见模式给假设判断，再最后只问 1 个最关键确认问题。",
+      "回复控制在 350-650 个中文字符，语气像顾问做判断，不要写成完整方案或项目计划。"
     ].join("\n");
   }
 
@@ -221,13 +239,14 @@ export async function onRequestPost(context) {
   const message = String(payload.message || "").trim();
   const intent = String(payload.intent || "diagnosis").slice(0, 40);
   const history = Array.isArray(payload.history) ? payload.history.slice(-10) : [];
-  const deepDiagnosis = Boolean(payload.deepDiagnosis) || isDeepDiagnosticRequest(message);
+  const longPlan = Boolean(payload.longPlan) || isLongPlanRequest(message);
+  const deepDiagnosis = !longPlan && (Boolean(payload.deepDiagnosis) || isDeepDiagnosticRequest(message));
 
   if (!message) {
     return json({ error: "message is required" }, 400);
   }
 
-  const turnPolicy = buildTurnPolicy(history, message, { deepDiagnosis });
+  const turnPolicy = buildTurnPolicy(history, message, { deepDiagnosis, longPlan });
   const messages = [
     { role: "system", content: `${SYSTEM_PROMPT}\n当前入口意图：${intent}` },
     { role: "system", content: turnPolicy },
@@ -237,12 +256,14 @@ export async function onRequestPost(context) {
     { role: "user", content: message.slice(0, 2000) }
   ];
 
-  const completionOptions = deepDiagnosis
+  const completionOptions = longPlan
     ? {
       maxTokens: aiDeepMaxTokens,
       aiThinkingType: aiDeepThinkingType,
       ...(aiDeepThinkingType !== "disabled" ? { timeoutMs: aiDeepThinkingTimeoutMs } : {})
     }
+    : deepDiagnosis
+      ? { maxTokens: 1200, aiThinkingType: "disabled" }
     : {};
   let upstream;
   let data;
@@ -258,7 +279,7 @@ export async function onRequestPost(context) {
       ...completionOptions
     }));
   } catch (error) {
-    if (!deepDiagnosis || aiDeepThinkingType === "disabled") throw error;
+    if (!longPlan || aiDeepThinkingType === "disabled") throw error;
     ({ upstream, data } = await requestAiCompletion({
       aiBaseUrl,
       apiKey,
@@ -270,7 +291,7 @@ export async function onRequestPost(context) {
     }));
   }
 
-  if (deepDiagnosis && !upstream.ok && aiDeepThinkingType !== "disabled") {
+  if (longPlan && !upstream.ok && aiDeepThinkingType !== "disabled") {
     ({ upstream, data } = await requestAiCompletion({
       aiBaseUrl,
       apiKey,
@@ -300,7 +321,7 @@ export async function onRequestPost(context) {
       aiTemperature,
       aiThinkingType,
       messages: repairMessages,
-      ...(deepDiagnosis ? completionOptions : { maxTokens: 1100 })
+      ...(longPlan ? completionOptions : { maxTokens: 1100 })
     });
     if (repaired.upstream.ok) {
       const repairedReply = normalizeAiReply(repaired.data.choices?.[0]?.message?.content || "");
