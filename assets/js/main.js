@@ -349,37 +349,104 @@ function isDeepDiagnosisRequest(text, options = {}) {
 function isLongPlanRequest(text, options = {}) {
   if (options.longPlan) return true;
   const value = compactChatValue(text);
-  return /详细方案|完整方案|详细报告|完整报告|系统方案|完整规划|实施计划书|写一份方案|longplan/i.test(value);
+  return /详细方案|完整方案|详细诊断|完整诊断|详细报告|完整报告|系统方案|完整规划|完整分析|深入分析|深度方案|实施计划书|写一份方案|帮我拆解|拆解一下|拆解方案|longplan/i.test(value);
 }
 
-function getChatLoadingMessage(text, intent, options = {}) {
+const chatLoadingSteps = {
+  longPlan: [
+    "正在建立诊断假设...",
+    "正在拆解增长流程...",
+    "正在匹配 AI APP 与 Skill...",
+    "正在整理落地步骤...",
+    "正在生成最终建议..."
+  ],
+  insight: [
+    "我正在识别表面问题和真实卡点...",
+    "正在判断优先切入环节...",
+    "正在匹配最适合的 AI APP..."
+  ],
+  product: [
+    "我正在匹配对应的 AI APP...",
+    "正在确认它解决哪段业务流程...",
+    "正在整理适合官网访客的简短说明..."
+  ],
+  service: [
+    "我正在整理服务路径...",
+    "正在对齐诊断、实施和复盘阶段...",
+    "正在压缩成清晰回复..."
+  ],
+  case: [
+    "我正在对照案例场景...",
+    "正在判断可参考的行业路径...",
+    "正在提炼可落地的部分..."
+  ],
+  privacy: [
+    "我正在核对资料使用边界...",
+    "正在确认哪些信息会用于诊断沟通...",
+    "正在整理隐私和授权说明..."
+  ],
+  contact: [
+    "我正在整理联系和预约入口...",
+    "正在确认下一步需要补充的信息...",
+    "正在准备沟通建议..."
+  ],
+  diagnosis: [
+    "我正在判断关键增长卡点...",
+    "正在对齐行业和业务流程...",
+    "正在整理优先切入建议..."
+  ],
+  general: [
+    "我正在理解你的问题...",
+    "正在匹配官网信息和服务路径...",
+    "正在整理回复..."
+  ]
+};
+
+function getChatMode(text, intent, options = {}) {
   if (isLongPlanRequest(text, options)) {
-    return "我正在整理完整方案...";
+    return "longPlan";
   }
 
   if (isDeepDiagnosisRequest(text, options)) {
-    return "我正在判断关键增长卡点...";
+    return "insight";
   }
 
   const value = compactChatValue(text);
 
   if (/(隐私|数据|资料|授权|保密)/u.test(value) || intent === "privacy") {
-    return "我正在核对资料使用边界...";
+    return "privacy";
+  }
+
+  if (/(预约|联系|微信|电话|手机|邮箱|地址|公众号|视频号|二维码|沟通)/u.test(value)) {
+    return "contact";
   }
 
   if (/(服务|周期|报价|合作|实施|陪跑|交付|顾问)/u.test(value) || intent === "service") {
-    return "我正在整理服务路径...";
+    return "service";
   }
 
   if (/(案例|对标|同行|参考)/u.test(value) || intent === "case") {
-    return "我正在对照案例场景...";
+    return "case";
   }
 
   if (/(产品|演示|aiapp|app|功能|工具)/i.test(value) || /ai?(引流|招商|运营|培训)/i.test(value) || ["demo", "product"].includes(intent)) {
-    return "我正在匹配对应的 AI APP...";
+    return "product";
   }
 
-  return "我正在判断增长卡点...";
+  if (/(增长|诊断|卡点|转化|线索|获客|复购|招商|门店|私域|培训|运营|行业)/u.test(value) || intent === "diagnosis") {
+    return "diagnosis";
+  }
+
+  return "general";
+}
+
+function getChatLoadingConfig(text, intent, options = {}) {
+  const mode = getChatMode(text, intent, options);
+  return {
+    mode,
+    steps: chatLoadingSteps[mode] || chatLoadingSteps.general,
+    showProcess: mode === "longPlan"
+  };
 }
 
 function normalizeChatReply(text) {
@@ -394,6 +461,8 @@ function normalizeChatReply(text) {
 function renderChatText(bubble, text) {
   const existing = bubble.querySelector(".chat-content");
   if (existing) existing.remove();
+  const loading = bubble.querySelector(".chat-loading");
+  if (loading) loading.remove();
 
   const content = document.createElement("div");
   content.className = "chat-content";
@@ -410,6 +479,100 @@ function renderChatText(bubble, text) {
   });
 
   bubble.appendChild(content);
+}
+
+function setChatLoadingStep(row, config = {}, index = 0) {
+  if (!row) return;
+  const steps = Array.isArray(config.steps) && config.steps.length ? config.steps : chatLoadingSteps.general;
+  const activeIndex = Math.max(0, Math.min(index, steps.length - 1));
+  const status = row.querySelector(".chat-loading-status");
+  if (status) status.textContent = steps[activeIndex];
+
+  row.querySelectorAll(".chat-loading-step").forEach((item, stepIndex) => {
+    item.classList.toggle("is-active", stepIndex === activeIndex);
+    item.classList.toggle("is-done", stepIndex < activeIndex);
+  });
+
+  const messages = row.closest("[data-chat-messages]");
+  if (messages) messages.scrollTop = messages.scrollHeight;
+}
+
+function renderChatLoading(bubble, config = {}) {
+  const existing = bubble.querySelector(".chat-content");
+  if (existing) existing.remove();
+  const previous = bubble.querySelector(".chat-loading");
+  if (previous) previous.remove();
+
+  const steps = Array.isArray(config.steps) && config.steps.length ? config.steps : chatLoadingSteps.general;
+  const loading = document.createElement("div");
+  loading.className = "chat-loading";
+  loading.setAttribute("data-chat-loading-mode", config.mode || "general");
+
+  const line = document.createElement("div");
+  line.className = "chat-loading-line";
+
+  const status = document.createElement("span");
+  status.className = "chat-loading-status";
+  status.textContent = steps[0];
+  line.appendChild(status);
+
+  const dots = document.createElement("span");
+  dots.className = "chat-loading-dots";
+  dots.setAttribute("aria-hidden", "true");
+  for (let index = 0; index < 3; index += 1) {
+    const dot = document.createElement("i");
+    dots.appendChild(dot);
+  }
+  line.appendChild(dots);
+  loading.appendChild(line);
+
+  if (config.showProcess) {
+    const process = document.createElement("ol");
+    process.className = "chat-loading-process";
+    steps.forEach((step, index) => {
+      const item = document.createElement("li");
+      item.className = "chat-loading-step";
+      if (index === 0) item.classList.add("is-active");
+      item.textContent = step.replace(/\.{3}$|…$/u, "");
+      process.appendChild(item);
+    });
+    loading.appendChild(process);
+  }
+
+  bubble.appendChild(loading);
+}
+
+function stopChatLoading(row) {
+  if (!row) return;
+  if (row._chatLoadingTimer) {
+    window.clearInterval(row._chatLoadingTimer);
+    row._chatLoadingTimer = null;
+  }
+  row._chatLoadingIndex = 0;
+  row._chatLoadingConfig = null;
+}
+
+function startChatLoading(row, config = {}) {
+  if (!row) return;
+  stopChatLoading(row);
+
+  const steps = Array.isArray(config.steps) && config.steps.length ? config.steps : chatLoadingSteps.general;
+  row._chatLoadingConfig = { ...config, steps };
+  row._chatLoadingIndex = 0;
+  setChatLoadingStep(row, row._chatLoadingConfig, 0);
+
+  const interval = config.showProcess ? 3200 : 2400;
+  row._chatLoadingTimer = window.setInterval(() => {
+    if (!row.isConnected) {
+      stopChatLoading(row);
+      return;
+    }
+
+    const current = Number.isFinite(row._chatLoadingIndex) ? row._chatLoadingIndex : 0;
+    const next = config.showProcess ? Math.min(current + 1, steps.length - 1) : (current + 1) % steps.length;
+    row._chatLoadingIndex = next;
+    setChatLoadingStep(row, row._chatLoadingConfig, next);
+  }, interval);
 }
 
 function chatTextLength(text) {
@@ -525,15 +688,22 @@ function appendChatMessage(widget, role, text, options = {}) {
     bubble.appendChild(speaker);
   }
 
-  renderChatText(bubble, text);
+  if (options.pending && options.loading) {
+    renderChatLoading(bubble, options.loading);
+  } else {
+    renderChatText(bubble, text);
+  }
+
   row.appendChild(bubble);
   messages.appendChild(row);
+  if (options.pending && options.loading) startChatLoading(row, options.loading);
   messages.scrollTop = messages.scrollHeight;
   return row;
 }
 
 function updateChatMessage(row, text) {
   if (!row) return;
+  stopChatLoading(row);
   const bubble = row.querySelector(".chat-bubble");
   if (bubble) renderChatText(bubble, text);
   row.removeAttribute("data-chat-pending");
@@ -591,7 +761,8 @@ async function submitChatPrompt(widget, text, options = {}) {
   widget._chatHistory = Array.isArray(widget._chatHistory) ? widget._chatHistory : [];
   widget._chatHistory.push({ role: "user", content: value });
 
-  const pending = appendChatMessage(widget, "bot", getChatLoadingMessage(value, intent, { deepDiagnosis, longPlan }), { pending: true });
+  const loading = getChatLoadingConfig(value, intent, { deepDiagnosis, longPlan });
+  const pending = appendChatMessage(widget, "bot", loading.steps[0], { pending: true, loading });
 
   try {
     const reply = await requestAiReply(widget, value, intent, { deepDiagnosis, longPlan });

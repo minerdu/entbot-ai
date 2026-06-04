@@ -36,7 +36,7 @@ function isDeepDiagnosticRequest(message) {
 
 function isLongPlanRequest(message) {
   const value = String(message || "").replace(/\s+/g, "").toLowerCase();
-  return /详细方案|完整方案|详细报告|完整报告|系统方案|完整规划|实施计划书|写一份方案|longplan/i.test(value);
+  return /详细方案|完整方案|详细诊断|完整诊断|详细报告|完整报告|系统方案|完整规划|完整分析|深入分析|深度方案|实施计划书|写一份方案|帮我拆解|拆解一下|拆解方案|longplan/i.test(value);
 }
 
 function buildTurnPolicy(history, message, options = {}) {
