@@ -140,19 +140,28 @@ function isLikelyIncompleteReply(reply) {
   return /(因为|没有|需要|通过|建议|包括|核心在于|通常是|可以先|先把|拆成|而是|不是)$/u.test(value);
 }
 
-async function requestAiCompletion({ aiBaseUrl, apiKey, aiModel, aiTemperature, messages, maxTokens = 900 }) {
+async function requestAiCompletion({ aiBaseUrl, apiKey, aiModel, aiTemperature, aiThinkingType, messages, maxTokens = 900 }) {
+  const requestBody = {
+    model: aiModel,
+    messages,
+    max_tokens: maxTokens
+  };
+
+  if (aiThinkingType && aiThinkingType !== "default") {
+    requestBody.thinking = { type: aiThinkingType };
+  }
+
+  if (Number.isFinite(aiTemperature) && aiThinkingType !== "disabled") {
+    requestBody.temperature = aiTemperature;
+  }
+
   const upstream = await fetch(`${aiBaseUrl}/chat/completions`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({
-      model: aiModel,
-      messages,
-      temperature: Number.isFinite(aiTemperature) ? aiTemperature : 1,
-      max_tokens: maxTokens
-    })
+    body: JSON.stringify(requestBody)
   });
 
   const data = await upstream.json().catch(() => ({}));
@@ -164,7 +173,11 @@ export async function onRequestPost(context) {
   const apiKey = env.TOKEN_PLAN_API_KEY;
   const aiBaseUrl = (env.TOKEN_PLAN_BASE_URL || "https://api.moonshot.cn/v1").replace(/\/$/, "");
   const aiModel = env.TOKEN_PLAN_MODEL || "kimi-k2.6";
-  const aiTemperature = Number(env.TOKEN_PLAN_TEMPERATURE || 1);
+  const aiTemperature =
+    env.TOKEN_PLAN_TEMPERATURE === undefined || String(env.TOKEN_PLAN_TEMPERATURE).trim() === ""
+      ? undefined
+      : Number(env.TOKEN_PLAN_TEMPERATURE);
+  const aiThinkingType = String(env.TOKEN_PLAN_THINKING || "disabled").trim();
 
   if (!apiKey) {
     return json({ error: "TOKEN_PLAN_API_KEY is not configured" }, 500);
@@ -189,7 +202,7 @@ export async function onRequestPost(context) {
     { role: "user", content: message.slice(0, 2000) }
   ];
 
-  let { upstream, data } = await requestAiCompletion({ aiBaseUrl, apiKey, aiModel, aiTemperature, messages });
+  let { upstream, data } = await requestAiCompletion({ aiBaseUrl, apiKey, aiModel, aiTemperature, aiThinkingType, messages });
 
   if (!upstream.ok) {
     return json({ error: data.error?.message || "upstream AI request failed" }, upstream.status);
@@ -202,7 +215,7 @@ export async function onRequestPost(context) {
       { role: "system", content: "上一轮模型输出疑似不完整或提前中断。请忽略不完整文本，重新回答最后一条用户消息。仍然必须遵守本轮强制规则：不要套固定话术，不要连续追问，围绕官网产品知识和客户当前问题给出完整中文答复，并自然收尾。" },
       ...messages
     ];
-    const repaired = await requestAiCompletion({ aiBaseUrl, apiKey, aiModel, aiTemperature, messages: repairMessages, maxTokens: 1100 });
+    const repaired = await requestAiCompletion({ aiBaseUrl, apiKey, aiModel, aiTemperature, aiThinkingType, messages: repairMessages, maxTokens: 1100 });
     if (repaired.upstream.ok) {
       const repairedReply = normalizeAiReply(repaired.data.choices?.[0]?.message?.content || "");
       if (repairedReply) {

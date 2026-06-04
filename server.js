@@ -21,7 +21,11 @@ if (fs.existsSync(envPath)) {
 const port = Number(process.env.PORT || 4188);
 const aiBaseUrl = (process.env.TOKEN_PLAN_BASE_URL || "https://api.moonshot.cn/v1").replace(/\/$/, "");
 const aiModel = process.env.TOKEN_PLAN_MODEL || "kimi-k2.6";
-const aiTemperature = Number(process.env.TOKEN_PLAN_TEMPERATURE || 1);
+const aiTemperature =
+  process.env.TOKEN_PLAN_TEMPERATURE === undefined || process.env.TOKEN_PLAN_TEMPERATURE.trim() === ""
+    ? undefined
+    : Number(process.env.TOKEN_PLAN_TEMPERATURE);
+const aiThinkingType = (process.env.TOKEN_PLAN_THINKING || "disabled").trim();
 const apiKey = process.env.TOKEN_PLAN_API_KEY;
 
 const mimeTypes = {
@@ -220,18 +224,27 @@ function isLikelyIncompleteReply(reply) {
 }
 
 async function requestAiCompletion(messages, maxTokens = 900) {
+  const requestBody = {
+    model: aiModel,
+    messages,
+    max_tokens: maxTokens
+  };
+
+  if (aiThinkingType && aiThinkingType !== "default") {
+    requestBody.thinking = { type: aiThinkingType };
+  }
+
+  if (Number.isFinite(aiTemperature) && aiThinkingType !== "disabled") {
+    requestBody.temperature = aiTemperature;
+  }
+
   const upstream = await fetch(`${aiBaseUrl}/chat/completions`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({
-      model: aiModel,
-      messages,
-      temperature: Number.isFinite(aiTemperature) ? aiTemperature : 1,
-      max_tokens: maxTokens
-    })
+    body: JSON.stringify(requestBody)
   });
 
   const data = await upstream.json().catch(() => ({}));
