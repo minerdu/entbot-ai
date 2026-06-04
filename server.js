@@ -28,6 +28,8 @@ const aiTemperature =
 const aiThinkingType = (process.env.TOKEN_PLAN_THINKING || "disabled").trim();
 const aiDeepThinkingType = (process.env.TOKEN_PLAN_DEEP_THINKING || "enabled").trim();
 const aiDeepMaxTokens = readPositiveNumber(process.env.TOKEN_PLAN_DEEP_MAX_TOKENS, 6000);
+const aiDeepFallbackMaxTokens = readPositiveNumber(process.env.TOKEN_PLAN_DEEP_FALLBACK_MAX_TOKENS, 1600);
+const aiDeepThinkingTimeoutMs = readPositiveNumber(process.env.TOKEN_PLAN_DEEP_THINKING_TIMEOUT_MS, 9000);
 const apiKey = process.env.TOKEN_PLAN_API_KEY;
 
 const mimeTypes = {
@@ -251,6 +253,8 @@ function isLikelyIncompleteReply(reply) {
 async function requestAiCompletion(messages, options = {}) {
   const maxTokens = options.maxTokens ?? 900;
   const thinkingType = options.thinkingType === undefined ? aiThinkingType : options.thinkingType;
+  const controller = options.timeoutMs ? new AbortController() : undefined;
+  const timeout = controller ? setTimeout(() => controller.abort(), options.timeoutMs) : undefined;
   const requestBody = {
     model: aiModel,
     messages,
@@ -265,17 +269,22 @@ async function requestAiCompletion(messages, options = {}) {
     requestBody.temperature = aiTemperature;
   }
 
-  const upstream = await fetch(`${aiBaseUrl}/chat/completions`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(requestBody)
-  });
+  try {
+    const upstream = await fetch(`${aiBaseUrl}/chat/completions`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(requestBody),
+      signal: controller?.signal
+    });
 
-  const data = await upstream.json().catch(() => ({}));
-  return { upstream, data };
+    const data = await upstream.json().catch(() => ({}));
+    return { upstream, data };
+  } finally {
+    if (timeout) clearTimeout(timeout);
+  }
 }
 
 async function handleChat(request, response) {
@@ -308,9 +317,27 @@ async function handleChat(request, response) {
   ];
 
   const completionOptions = deepDiagnosis
-    ? { maxTokens: aiDeepMaxTokens, thinkingType: aiDeepThinkingType }
+    ? { maxTokens: aiDeepMaxTokens, thinkingType: aiDeepThinkingType, timeoutMs: aiDeepThinkingTimeoutMs }
     : {};
-  let { upstream, data } = await requestAiCompletion(messages, completionOptions);
+  let upstream;
+  let data;
+
+  try {
+    ({ upstream, data } = await requestAiCompletion(messages, completionOptions));
+  } catch (error) {
+    if (!deepDiagnosis || aiDeepThinkingType === "disabled") throw error;
+    ({ upstream, data } = await requestAiCompletion(messages, {
+      maxTokens: aiDeepFallbackMaxTokens,
+      thinkingType: "disabled"
+    }));
+  }
+
+  if (deepDiagnosis && !upstream.ok && aiDeepThinkingType !== "disabled") {
+    ({ upstream, data } = await requestAiCompletion(messages, {
+      maxTokens: aiDeepFallbackMaxTokens,
+      thinkingType: "disabled"
+    }));
+  }
 
   if (!upstream.ok) {
     sendJson(response, upstream.status, { error: data.error?.message || "upstream AI request failed" });

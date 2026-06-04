@@ -163,7 +163,9 @@ function isLikelyIncompleteReply(reply) {
   return /(因为|没有|需要|通过|建议|包括|核心在于|通常是|可以先|先把|拆成|而是|不是)$/u.test(value);
 }
 
-async function requestAiCompletion({ aiBaseUrl, apiKey, aiModel, aiTemperature, aiThinkingType, messages, maxTokens = 900 }) {
+async function requestAiCompletion({ aiBaseUrl, apiKey, aiModel, aiTemperature, aiThinkingType, messages, maxTokens = 900, timeoutMs }) {
+  const controller = timeoutMs ? new AbortController() : undefined;
+  const timeout = controller ? setTimeout(() => controller.abort(), timeoutMs) : undefined;
   const requestBody = {
     model: aiModel,
     messages,
@@ -178,17 +180,22 @@ async function requestAiCompletion({ aiBaseUrl, apiKey, aiModel, aiTemperature, 
     requestBody.temperature = aiTemperature;
   }
 
-  const upstream = await fetch(`${aiBaseUrl}/chat/completions`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(requestBody)
-  });
+  try {
+    const upstream = await fetch(`${aiBaseUrl}/chat/completions`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(requestBody),
+      signal: controller?.signal
+    });
 
-  const data = await upstream.json().catch(() => ({}));
-  return { upstream, data };
+    const data = await upstream.json().catch(() => ({}));
+    return { upstream, data };
+  } finally {
+    if (timeout) clearTimeout(timeout);
+  }
 }
 
 export async function onRequestPost(context) {
@@ -203,6 +210,8 @@ export async function onRequestPost(context) {
   const aiThinkingType = String(env.TOKEN_PLAN_THINKING || "disabled").trim();
   const aiDeepThinkingType = String(env.TOKEN_PLAN_DEEP_THINKING || "enabled").trim();
   const aiDeepMaxTokens = readPositiveNumber(env.TOKEN_PLAN_DEEP_MAX_TOKENS, 6000);
+  const aiDeepFallbackMaxTokens = readPositiveNumber(env.TOKEN_PLAN_DEEP_FALLBACK_MAX_TOKENS, 1600);
+  const aiDeepThinkingTimeoutMs = readPositiveNumber(env.TOKEN_PLAN_DEEP_THINKING_TIMEOUT_MS, 9000);
 
   if (!apiKey) {
     return json({ error: "TOKEN_PLAN_API_KEY is not configured" }, 500);
@@ -229,17 +238,45 @@ export async function onRequestPost(context) {
   ];
 
   const completionOptions = deepDiagnosis
-    ? { maxTokens: aiDeepMaxTokens, aiThinkingType: aiDeepThinkingType }
+    ? { maxTokens: aiDeepMaxTokens, aiThinkingType: aiDeepThinkingType, timeoutMs: aiDeepThinkingTimeoutMs }
     : {};
-  let { upstream, data } = await requestAiCompletion({
-    aiBaseUrl,
-    apiKey,
-    aiModel,
-    aiTemperature,
-    aiThinkingType,
-    messages,
-    ...completionOptions
-  });
+  let upstream;
+  let data;
+
+  try {
+    ({ upstream, data } = await requestAiCompletion({
+      aiBaseUrl,
+      apiKey,
+      aiModel,
+      aiTemperature,
+      aiThinkingType,
+      messages,
+      ...completionOptions
+    }));
+  } catch (error) {
+    if (!deepDiagnosis || aiDeepThinkingType === "disabled") throw error;
+    ({ upstream, data } = await requestAiCompletion({
+      aiBaseUrl,
+      apiKey,
+      aiModel,
+      aiTemperature,
+      aiThinkingType: "disabled",
+      messages,
+      maxTokens: aiDeepFallbackMaxTokens
+    }));
+  }
+
+  if (deepDiagnosis && !upstream.ok && aiDeepThinkingType !== "disabled") {
+    ({ upstream, data } = await requestAiCompletion({
+      aiBaseUrl,
+      apiKey,
+      aiModel,
+      aiTemperature,
+      aiThinkingType: "disabled",
+      messages,
+      maxTokens: aiDeepFallbackMaxTokens
+    }));
+  }
 
   if (!upstream.ok) {
     return json({ error: data.error?.message || "upstream AI request failed" }, upstream.status);

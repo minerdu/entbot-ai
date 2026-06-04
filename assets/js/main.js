@@ -588,10 +588,11 @@ async function submitChatPrompt(widget, text, options = {}) {
     updateChatReplyMessages(widget, pending, finalReply);
     widget._chatHistory.push({ role: "assistant", content: finalReply });
   } catch (error) {
+    const detail = error && error.message ? `：${error.message}` : "";
     const message =
-      error && error.message
-        ? `AI 服务连接失败：${error.message} 请通过 http://127.0.0.1 本地服务或线上部署页面访问，并确认服务端已配置 TOKEN_PLAN_API_KEY。`
-        : "AI 服务连接失败。请稍后再试，或通过企业微信、邮箱联系蔚为。";
+      window.location.protocol === "file:"
+        ? `AI 服务连接失败${detail} 请通过 http://127.0.0.1 本地服务或线上部署页面访问。`
+        : `AI 服务连接失败${detail} 请稍后再试，或通过企业微信、邮箱联系蔚为。`;
     updateChatMessage(pending, message);
     widget._chatHistory.push({ role: "assistant", content: message });
   }
