@@ -349,56 +349,103 @@ function isDeepDiagnosisRequest(text, options = {}) {
 function isLongPlanRequest(text, options = {}) {
   if (options.longPlan) return true;
   const value = compactChatValue(text);
-  return /详细方案|完整方案|详细诊断|完整诊断|详细报告|完整报告|系统方案|完整规划|完整分析|深入分析|深度方案|实施计划书|写一份方案|帮我拆解|拆解一下|拆解方案|longplan/i.test(value);
+  const detailIntent = /(详细|完整|系统|方案|解决方案|规划|计划|报告|拆解|拆一下|拆一拆|落地|实施|路径|打法|策略|路线图|sop|诊断书|建议书|执行步骤|落地步骤|怎么做|如何做|帮我做|出一份|设计|制定|搭建|longplan)/i.test(value);
+  const aiWorkflow = /(ai引流|ai招商|ai运营|ai培训|aiapp|ai解决|招商ai|引流ai|运营ai|培训ai|增长ai|增长方案|招商方案|获客方案|运营方案|培训方案|私域方案|转化方案)/i.test(value);
+  const workflowPlanIntent = /(方案|解决|详细|完整|拆|落地|实施|规划|路径|怎么做|如何做|帮我做|出一份|设计|制定|搭建|打法|策略)/i.test(value);
+  return detailIntent || (aiWorkflow && workflowPlanIntent);
 }
 
 const chatLoadingSteps = {
   longPlan: [
-    "正在做完整方案分析，可能需要 10-20 秒...",
-    "正在从目标、获客、转化、交付四层定位主矛盾...",
-    "正在把增长卡点拆成可执行的 AI 工作流...",
-    "正在匹配优先落地的 AI APP、Agent 和 Skill...",
-    "正在压缩成可执行方案，而不是生成长报告..."
+    "识别客户要的是详细解决方案",
+    "用 Kimi thinking 分析增长主矛盾",
+    "拆解获客、转化、运营或培训流程",
+    "匹配 AI APP、Agent 和 Skill 落地路径",
+    "整理成可执行的详细方案"
   ],
   insight: [
-    "正在做洞察式诊断，不是生成长报告...",
-    "正在区分表面问题和真实瓶颈...",
-    "正在判断最优先的 AI 切入口...",
-    "正在生成顾问式结论..."
+    "识别表面问题和真实增长瓶颈",
+    "判断客户卡在获客、转化还是运营",
+    "确认最优先的 AI 切入口",
+    "匹配对应的 AI APP 和工作流",
+    "生成顾问式诊断结论"
   ],
-  product: [
-    "我正在匹配对应的 AI APP...",
-    "正在确认它解决哪段业务流程...",
-    "正在整理适合官网访客的简短说明..."
+  productIntro: [
+    "正在识别你问的是哪类 AI APP...",
+    "正在对照产品功能和适用场景...",
+    "正在筛选最相关的模块...",
+    "正在组织成简短产品说明..."
+  ],
+  productDemo: [
+    "正在判断最适合演示的产品场景...",
+    "正在匹配对应的 AI APP 工作台...",
+    "正在整理演示时应该看的模块...",
+    "正在给出下一步预约建议..."
+  ],
+  leadGen: [
+    "正在识别获客和引流问题...",
+    "正在判断线索来源和内容渠道...",
+    "正在匹配 AI 引流相关流程...",
+    "正在整理优先优化动作..."
+  ],
+  franchise: [
+    "正在识别招商或加盟转化问题...",
+    "正在判断线索跟进和会后推进环节...",
+    "正在匹配 AI 招商工作流...",
+    "正在整理招商增长建议..."
+  ],
+  operation: [
+    "正在识别运营和复购问题...",
+    "正在判断私域、会员或门店执行环节...",
+    "正在匹配 AI 运营工作流...",
+    "正在整理运营优化建议..."
+  ],
+  training: [
+    "正在识别培训和团队复制问题...",
+    "正在判断话术、训练和督导环节...",
+    "正在匹配 AI 培训工作流...",
+    "正在整理团队提效建议..."
+  ],
+  conversion: [
+    "正在识别转化和成交问题...",
+    "正在判断咨询、跟进和成交环节...",
+    "正在匹配可自动化的执行动作...",
+    "正在整理转化提升建议..."
   ],
   service: [
     "我正在整理服务路径...",
     "正在对齐诊断、实施和复盘阶段...",
+    "正在确认合作方式和服务周期...",
     "正在压缩成清晰回复..."
   ],
   case: [
     "我正在对照案例场景...",
     "正在判断可参考的行业路径...",
-    "正在提炼可落地的部分..."
+    "正在提炼可落地的部分...",
+    "正在整理成案例式说明..."
   ],
   privacy: [
     "我正在核对资料使用边界...",
     "正在确认哪些信息会用于诊断沟通...",
-    "正在整理隐私和授权说明..."
+    "正在对照隐私和授权规则...",
+    "正在整理安全说明..."
   ],
   contact: [
     "我正在整理联系和预约入口...",
     "正在确认下一步需要补充的信息...",
-    "正在准备沟通建议..."
+    "正在匹配最合适的沟通方式...",
+    "正在准备预约建议..."
   ],
   diagnosis: [
     "我正在快速确认咨询方向...",
     "正在对齐行业、目标和当前流程...",
+    "正在判断最可能的增长卡点...",
     "正在整理一个可继续沟通的建议..."
   ],
   general: [
     "我正在理解你的问题...",
     "正在匹配官网信息和服务路径...",
+    "正在判断是否需要补充关键信息...",
     "正在整理回复..."
   ]
 };
@@ -422,7 +469,7 @@ function getChatMode(text, intent, options = {}) {
     return "contact";
   }
 
-  if (/(服务|周期|报价|合作|实施|陪跑|交付|顾问)/u.test(value) || intent === "service") {
+  if (/(服务|周期|报价|合作|实施|陪跑|交付|顾问|怎么合作)/u.test(value) || intent === "service") {
     return "service";
   }
 
@@ -430,8 +477,32 @@ function getChatMode(text, intent, options = {}) {
     return "case";
   }
 
-  if (/(产品|演示|aiapp|app|功能|工具)/i.test(value) || /ai?(引流|招商|运营|培训)/i.test(value) || ["demo", "product"].includes(intent)) {
-    return "product";
+  if (/(招商|加盟|经销|代理|ai招商|招商ai)/i.test(value)) {
+    return "franchise";
+  }
+
+  if (/(引流|获客|线索|流量|投放|渠道|内容矩阵|短视频|ai引流|引流ai)/i.test(value)) {
+    return "leadGen";
+  }
+
+  if (/(运营|复购|私域|社群|会员|留存|门店执行|客户分层|ai运营|运营ai)/i.test(value)) {
+    return "operation";
+  }
+
+  if (/(培训|员工|复制|训练|话术|督导|标准化|ai培训|培训ai)/i.test(value)) {
+    return "training";
+  }
+
+  if (/(转化|成交|跟进|留资|咨询转化|成单)/u.test(value)) {
+    return "conversion";
+  }
+
+  if (/(演示|demo|试用|体验|看一下|看看)/i.test(value) || intent === "demo") {
+    return "productDemo";
+  }
+
+  if (/(产品|aiapp|app|功能|工具|是什么|能做什么|介绍)/i.test(value) || /ai?(引流|招商|运营|培训)/i.test(value) || intent === "product") {
+    return "productIntro";
   }
 
   if (/(增长|诊断|卡点|转化|线索|获客|复购|招商|门店|私域|培训|运营|行业)/u.test(value) || intent === "diagnosis") {
@@ -446,7 +517,9 @@ function getChatLoadingConfig(text, intent, options = {}) {
   return {
     mode,
     steps: chatLoadingSteps[mode] || chatLoadingSteps.general,
-    showProcess: mode === "longPlan" || mode === "insight"
+    layout: mode === "longPlan" || mode === "insight" ? "process" : "single",
+    stepDurationMs: mode === "longPlan" ? 3600 : mode === "insight" ? 2800 : 2200,
+    maxProgress: mode === "longPlan" || mode === "insight" ? 95 : 90
   };
 }
 
@@ -486,8 +559,25 @@ function setChatLoadingStep(row, config = {}, index = 0) {
   if (!row) return;
   const steps = Array.isArray(config.steps) && config.steps.length ? config.steps : chatLoadingSteps.general;
   const activeIndex = Math.max(0, Math.min(index, steps.length - 1));
+  const elapsedSeconds = row._chatLoadingStartedAt ? Math.max(0, Math.floor((Date.now() - row._chatLoadingStartedAt) / 1000)) : 0;
+  const firstProgress = config.layout === "process" ? 16 : 25;
+  const maxProgress = Number.isFinite(config.maxProgress) ? config.maxProgress : config.layout === "process" ? 95 : 90;
+  const progress =
+    steps.length <= 1
+      ? maxProgress
+      : Math.round(firstProgress + ((maxProgress - firstProgress) * activeIndex) / (steps.length - 1));
+
   const status = row.querySelector(".chat-loading-status");
   if (status) status.textContent = steps[activeIndex];
+  const elapsed = row.querySelector(".chat-loading-elapsed");
+  if (elapsed) elapsed.textContent = `模型思考中 ${elapsedSeconds}s`;
+  const progressLabel = row.querySelector(".chat-loading-progress-label");
+  if (progressLabel) progressLabel.textContent = `${progress}%`;
+  const progressBar = row.querySelector(".chat-loading-progress-bar");
+  if (progressBar) {
+    progressBar.style.width = `${progress}%`;
+    progressBar.setAttribute("aria-valuenow", String(progress));
+  }
 
   row.querySelectorAll(".chat-loading-step").forEach((item, stepIndex) => {
     item.classList.toggle("is-active", stepIndex === activeIndex);
@@ -508,26 +598,47 @@ function renderChatLoading(bubble, config = {}) {
   const loading = document.createElement("div");
   loading.className = "chat-loading";
   loading.setAttribute("data-chat-loading-mode", config.mode || "general");
+  loading.setAttribute("data-chat-loading-layout", config.layout || "single");
 
-  const line = document.createElement("div");
-  line.className = "chat-loading-line";
+  if (config.layout !== "process") {
+    const current = document.createElement("div");
+    current.className = "chat-loading-current";
 
-  const status = document.createElement("span");
-  status.className = "chat-loading-status";
-  status.textContent = steps[0];
-  line.appendChild(status);
-
-  const dots = document.createElement("span");
-  dots.className = "chat-loading-dots";
-  dots.setAttribute("aria-hidden", "true");
-  for (let index = 0; index < 3; index += 1) {
-    const dot = document.createElement("i");
-    dots.appendChild(dot);
+    const status = document.createElement("span");
+    status.className = "chat-loading-status";
+    status.textContent = steps[0];
+    current.appendChild(status);
+    loading.appendChild(current);
   }
-  line.appendChild(dots);
-  loading.appendChild(line);
 
-  if (config.showProcess) {
+  const meta = document.createElement("div");
+  meta.className = "chat-loading-meta";
+
+  const elapsed = document.createElement("span");
+  elapsed.className = "chat-loading-elapsed";
+  elapsed.textContent = "模型思考中 0s";
+  meta.appendChild(elapsed);
+
+  const progressLabel = document.createElement("span");
+  progressLabel.className = "chat-loading-progress-label";
+  progressLabel.textContent = config.layout === "process" ? "16%" : "25%";
+  meta.appendChild(progressLabel);
+  loading.appendChild(meta);
+
+  const progress = document.createElement("div");
+  progress.className = "chat-loading-progress";
+  progress.setAttribute("role", "progressbar");
+  progress.setAttribute("aria-valuemin", "0");
+  progress.setAttribute("aria-valuemax", "100");
+  progress.setAttribute("aria-valuenow", config.layout === "process" ? "16" : "25");
+
+  const progressBar = document.createElement("span");
+  progressBar.className = "chat-loading-progress-bar";
+  progressBar.style.width = config.layout === "process" ? "16%" : "25%";
+  progress.appendChild(progressBar);
+  loading.appendChild(progress);
+
+  if (config.layout === "process") {
     const process = document.createElement("ol");
     process.className = "chat-loading-process";
     steps.forEach((step, index) => {
@@ -551,6 +662,7 @@ function stopChatLoading(row) {
   }
   row._chatLoadingIndex = 0;
   row._chatLoadingConfig = null;
+  row._chatLoadingStartedAt = null;
 }
 
 function startChatLoading(row, config = {}) {
@@ -560,20 +672,21 @@ function startChatLoading(row, config = {}) {
   const steps = Array.isArray(config.steps) && config.steps.length ? config.steps : chatLoadingSteps.general;
   row._chatLoadingConfig = { ...config, steps };
   row._chatLoadingIndex = 0;
+  row._chatLoadingStartedAt = Date.now();
   setChatLoadingStep(row, row._chatLoadingConfig, 0);
 
-  const interval = config.showProcess ? 3200 : 2400;
+  const stepDuration = Number.isFinite(config.stepDurationMs) ? config.stepDurationMs : 2200;
   row._chatLoadingTimer = window.setInterval(() => {
     if (!row.isConnected) {
       stopChatLoading(row);
       return;
     }
 
-    const current = Number.isFinite(row._chatLoadingIndex) ? row._chatLoadingIndex : 0;
-    const next = config.showProcess ? Math.min(current + 1, steps.length - 1) : (current + 1) % steps.length;
+    const elapsed = Date.now() - row._chatLoadingStartedAt;
+    const next = Math.min(Math.floor(elapsed / stepDuration), steps.length - 1);
     row._chatLoadingIndex = next;
     setChatLoadingStep(row, row._chatLoadingConfig, next);
-  }, interval);
+  }, 1000);
 }
 
 function chatTextLength(text) {

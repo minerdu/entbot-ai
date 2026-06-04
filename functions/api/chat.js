@@ -36,7 +36,10 @@ function isDeepDiagnosticRequest(message) {
 
 function isLongPlanRequest(message) {
   const value = String(message || "").replace(/\s+/g, "").toLowerCase();
-  return /详细方案|完整方案|详细诊断|完整诊断|详细报告|完整报告|系统方案|完整规划|完整分析|深入分析|深度方案|实施计划书|写一份方案|帮我拆解|拆解一下|拆解方案|longplan/i.test(value);
+  const detailIntent = /(详细|完整|系统|方案|解决方案|规划|计划|报告|拆解|拆一下|拆一拆|落地|实施|路径|打法|策略|路线图|sop|诊断书|建议书|执行步骤|落地步骤|怎么做|如何做|帮我做|出一份|设计|制定|搭建|longplan)/i.test(value);
+  const aiWorkflow = /(ai引流|ai招商|ai运营|ai培训|aiapp|ai解决|招商ai|引流ai|运营ai|培训ai|增长ai|增长方案|招商方案|获客方案|运营方案|培训方案|私域方案|转化方案)/i.test(value);
+  const workflowPlanIntent = /(方案|解决|详细|完整|拆|落地|实施|规划|路径|怎么做|如何做|帮我做|出一份|设计|制定|搭建|打法|策略)/i.test(value);
+  return detailIntent || (aiWorkflow && workflowPlanIntent);
 }
 
 function buildTurnPolicy(history, message, options = {}) {
@@ -226,10 +229,9 @@ export async function onRequestPost(context) {
       ? undefined
       : Number(env.TOKEN_PLAN_TEMPERATURE);
   const aiThinkingType = String(env.TOKEN_PLAN_THINKING || "disabled").trim();
-  const aiDeepThinkingType = String(env.TOKEN_PLAN_DEEP_THINKING || "disabled").trim();
-  const aiDeepMaxTokens = readPositiveNumber(env.TOKEN_PLAN_DEEP_MAX_TOKENS, 1800);
-  const aiDeepFallbackMaxTokens = readPositiveNumber(env.TOKEN_PLAN_DEEP_FALLBACK_MAX_TOKENS, 1600);
-  const aiDeepThinkingTimeoutMs = readPositiveNumber(env.TOKEN_PLAN_DEEP_THINKING_TIMEOUT_MS, 9000);
+  const aiDeepThinkingType = String(env.TOKEN_PLAN_DEEP_THINKING || "enabled").trim();
+  const aiDeepMaxTokens = readPositiveNumber(env.TOKEN_PLAN_DEEP_MAX_TOKENS, 5000);
+  const aiDeepThinkingTimeoutMs = readPositiveNumber(env.TOKEN_PLAN_DEEP_THINKING_TIMEOUT_MS, 30000);
 
   if (!apiKey) {
     return json({ error: "TOKEN_PLAN_API_KEY is not configured" }, 500);
@@ -256,11 +258,12 @@ export async function onRequestPost(context) {
     { role: "user", content: message.slice(0, 2000) }
   ];
 
+  const longPlanThinkingType = aiDeepThinkingType && aiDeepThinkingType !== "disabled" ? aiDeepThinkingType : "enabled";
   const completionOptions = longPlan
     ? {
       maxTokens: aiDeepMaxTokens,
-      aiThinkingType: aiDeepThinkingType,
-      ...(aiDeepThinkingType !== "disabled" ? { timeoutMs: aiDeepThinkingTimeoutMs } : {})
+      aiThinkingType: longPlanThinkingType,
+      timeoutMs: aiDeepThinkingTimeoutMs
     }
     : deepDiagnosis
       ? { maxTokens: 1200, aiThinkingType: "disabled" }
@@ -279,27 +282,27 @@ export async function onRequestPost(context) {
       ...completionOptions
     }));
   } catch (error) {
-    if (!longPlan || aiDeepThinkingType === "disabled") throw error;
+    if (!longPlan) throw error;
     ({ upstream, data } = await requestAiCompletion({
       aiBaseUrl,
       apiKey,
       aiModel,
       aiTemperature,
-      aiThinkingType: "disabled",
+      aiThinkingType,
       messages,
-      maxTokens: aiDeepFallbackMaxTokens
+      ...completionOptions
     }));
   }
 
-  if (longPlan && !upstream.ok && aiDeepThinkingType !== "disabled") {
+  if (longPlan && !upstream.ok) {
     ({ upstream, data } = await requestAiCompletion({
       aiBaseUrl,
       apiKey,
       aiModel,
       aiTemperature,
-      aiThinkingType: "disabled",
+      aiThinkingType,
       messages,
-      maxTokens: aiDeepFallbackMaxTokens
+      ...completionOptions
     }));
   }
 
