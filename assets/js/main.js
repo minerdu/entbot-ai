@@ -354,16 +354,17 @@ function isLongPlanRequest(text, options = {}) {
 
 const chatLoadingSteps = {
   longPlan: [
-    "正在建立诊断假设...",
-    "正在拆解增长流程...",
-    "正在匹配 AI APP 与 Skill...",
-    "正在整理落地步骤...",
-    "正在生成最终建议..."
+    "正在做完整方案分析，可能需要 10-20 秒...",
+    "正在从目标、获客、转化、交付四层定位主矛盾...",
+    "正在把增长卡点拆成可执行的 AI 工作流...",
+    "正在匹配优先落地的 AI APP、Agent 和 Skill...",
+    "正在压缩成可执行方案，而不是生成长报告..."
   ],
   insight: [
-    "我正在识别表面问题和真实卡点...",
-    "正在判断优先切入环节...",
-    "正在匹配最适合的 AI APP..."
+    "正在做洞察式诊断，不是生成长报告...",
+    "正在区分表面问题和真实瓶颈...",
+    "正在判断最优先的 AI 切入口...",
+    "正在生成顾问式结论..."
   ],
   product: [
     "我正在匹配对应的 AI APP...",
@@ -391,9 +392,9 @@ const chatLoadingSteps = {
     "正在准备沟通建议..."
   ],
   diagnosis: [
-    "我正在判断关键增长卡点...",
-    "正在对齐行业和业务流程...",
-    "正在整理优先切入建议..."
+    "我正在快速确认咨询方向...",
+    "正在对齐行业、目标和当前流程...",
+    "正在整理一个可继续沟通的建议..."
   ],
   general: [
     "我正在理解你的问题...",
@@ -445,7 +446,7 @@ function getChatLoadingConfig(text, intent, options = {}) {
   return {
     mode,
     steps: chatLoadingSteps[mode] || chatLoadingSteps.general,
-    showProcess: mode === "longPlan"
+    showProcess: mode === "longPlan" || mode === "insight"
   };
 }
 
