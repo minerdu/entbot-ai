@@ -26,8 +26,8 @@ const aiTemperature =
     ? undefined
     : Number(process.env.TOKEN_PLAN_TEMPERATURE);
 const aiThinkingType = (process.env.TOKEN_PLAN_THINKING || "disabled").trim();
-const aiDeepThinkingType = (process.env.TOKEN_PLAN_DEEP_THINKING || "enabled").trim();
-const aiDeepMaxTokens = readPositiveNumber(process.env.TOKEN_PLAN_DEEP_MAX_TOKENS, 6000);
+const aiDeepThinkingType = (process.env.TOKEN_PLAN_DEEP_THINKING || "disabled").trim();
+const aiDeepMaxTokens = readPositiveNumber(process.env.TOKEN_PLAN_DEEP_MAX_TOKENS, 1800);
 const aiDeepFallbackMaxTokens = readPositiveNumber(process.env.TOKEN_PLAN_DEEP_FALLBACK_MAX_TOKENS, 1600);
 const aiDeepThinkingTimeoutMs = readPositiveNumber(process.env.TOKEN_PLAN_DEEP_THINKING_TIMEOUT_MS, 9000);
 const apiKey = process.env.TOKEN_PLAN_API_KEY;

@@ -208,8 +208,8 @@ export async function onRequestPost(context) {
       ? undefined
       : Number(env.TOKEN_PLAN_TEMPERATURE);
   const aiThinkingType = String(env.TOKEN_PLAN_THINKING || "disabled").trim();
-  const aiDeepThinkingType = String(env.TOKEN_PLAN_DEEP_THINKING || "enabled").trim();
-  const aiDeepMaxTokens = readPositiveNumber(env.TOKEN_PLAN_DEEP_MAX_TOKENS, 6000);
+  const aiDeepThinkingType = String(env.TOKEN_PLAN_DEEP_THINKING || "disabled").trim();
+  const aiDeepMaxTokens = readPositiveNumber(env.TOKEN_PLAN_DEEP_MAX_TOKENS, 1800);
   const aiDeepFallbackMaxTokens = readPositiveNumber(env.TOKEN_PLAN_DEEP_FALLBACK_MAX_TOKENS, 1600);
   const aiDeepThinkingTimeoutMs = readPositiveNumber(env.TOKEN_PLAN_DEEP_THINKING_TIMEOUT_MS, 9000);
 
