@@ -23507,6 +23507,17 @@ body.service-page .main {
   color: #f7f4ee;
 }
 
+.chat-quick-actions button[data-chat-deep="true"] {
+  border-color: rgba(73, 131, 255, 0.58);
+  background: rgba(73, 131, 255, 0.16);
+  color: #f7f4ee;
+}
+
+.chat-quick-actions button[data-chat-deep="true"]:hover {
+  border-color: rgba(139, 240, 189, 0.62);
+  background: rgba(73, 131, 255, 0.24);
+}
+
 .chat-input-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;

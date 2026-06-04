@@ -26,6 +26,8 @@ const aiTemperature =
     ? undefined
     : Number(process.env.TOKEN_PLAN_TEMPERATURE);
 const aiThinkingType = (process.env.TOKEN_PLAN_THINKING || "disabled").trim();
+const aiDeepThinkingType = (process.env.TOKEN_PLAN_DEEP_THINKING || "enabled").trim();
+const aiDeepMaxTokens = readPositiveNumber(process.env.TOKEN_PLAN_DEEP_MAX_TOKENS, 6000);
 const apiKey = process.env.TOKEN_PLAN_API_KEY;
 
 const mimeTypes = {
@@ -107,9 +109,32 @@ function hasAskedDiagnosticQuestion(history) {
   return Array.isArray(history) && history.some((item) => item && item.role === "assistant" && /[?？]/.test(String(item.content || "")));
 }
 
-function buildTurnPolicy(history, message) {
+function readPositiveNumber(value, fallback) {
+  const number = Number(value);
+  return Number.isFinite(number) && number > 0 ? number : fallback;
+}
+
+function isDeepDiagnosticRequest(message) {
+  const value = String(message || "").replace(/\s+/g, "").toLowerCase();
+  return /详细方案|完整方案|完整诊断|深度诊断|完整分析|深度分析|帮我拆解|详细拆解|系统拆解|系统方案|全面诊断|完整规划|deepdiagnosis|deepdiagnose/i.test(value);
+}
+
+function buildTurnPolicy(history, message, options = {}) {
   const lastAssistant = [...history].reverse().find((item) => item && item.role === "assistant" && item.content);
   const lastAssistantAsked = /[?？]/.test(String(lastAssistant?.content || ""));
+
+  if (options.deepDiagnosis) {
+    return [
+      "## 本轮强制规则",
+      "用户正在请求详细方案或完整诊断，本轮允许做深度诊断。",
+      "不要输出思考过程、reasoning_content、内部推理或模型参数，只输出适合官网访客阅读的最终答案。",
+      "请基于最近上下文和当前问题，按“需求判断 -> 优先卡点 -> AI 解决方案 -> 落地步骤 -> 服务/合作建议”的思路回答。",
+      "方案要结合蔚为的 AI 引流、AI 招商、AI 运营、AI 培训、Agent、Skill 和 AI APP 工作流。",
+      "如果信息不足，先给可判断部分，最后只列最多 3 个必须补充的问题；不要把整篇回复变成问卷。",
+      "回复要具体、可执行，优先控制在 700-1200 个中文字符。"
+    ].join("\n");
+  }
+
   if (isProductInfoQuestion(message)) {
     return [
       "## 本轮强制规则",
@@ -223,18 +248,20 @@ function isLikelyIncompleteReply(reply) {
   return /(因为|没有|需要|通过|建议|包括|核心在于|通常是|可以先|先把|拆成|而是|不是)$/u.test(value);
 }
 
-async function requestAiCompletion(messages, maxTokens = 900) {
+async function requestAiCompletion(messages, options = {}) {
+  const maxTokens = options.maxTokens ?? 900;
+  const thinkingType = options.thinkingType === undefined ? aiThinkingType : options.thinkingType;
   const requestBody = {
     model: aiModel,
     messages,
     max_tokens: maxTokens
   };
 
-  if (aiThinkingType && aiThinkingType !== "default") {
-    requestBody.thinking = { type: aiThinkingType };
+  if (thinkingType && thinkingType !== "default") {
+    requestBody.thinking = { type: thinkingType };
   }
 
-  if (Number.isFinite(aiTemperature) && aiThinkingType !== "disabled") {
+  if (Number.isFinite(aiTemperature) && thinkingType !== "disabled") {
     requestBody.temperature = aiTemperature;
   }
 
@@ -262,6 +289,7 @@ async function handleChat(request, response) {
   const message = String(payload.message || "").trim();
   const intent = String(payload.intent || "diagnosis").slice(0, 40);
   const history = Array.isArray(payload.history) ? payload.history.slice(-10) : [];
+  const deepDiagnosis = Boolean(payload.deepDiagnosis) || isDeepDiagnosticRequest(message);
 
   if (!message) {
     sendJson(response, 400, { error: "message is required" });
@@ -269,7 +297,7 @@ async function handleChat(request, response) {
   }
 
   const systemPrompt = await loadSystemPrompt();
-  const turnPolicy = buildTurnPolicy(history, message);
+  const turnPolicy = buildTurnPolicy(history, message, { deepDiagnosis });
   const messages = [
     { role: "system", content: `${systemPrompt}\n当前入口意图：${intent}` },
     { role: "system", content: turnPolicy },
@@ -279,7 +307,10 @@ async function handleChat(request, response) {
     { role: "user", content: message.slice(0, 2000) }
   ];
 
-  let { upstream, data } = await requestAiCompletion(messages);
+  const completionOptions = deepDiagnosis
+    ? { maxTokens: aiDeepMaxTokens, thinkingType: aiDeepThinkingType }
+    : {};
+  let { upstream, data } = await requestAiCompletion(messages, completionOptions);
 
   if (!upstream.ok) {
     sendJson(response, upstream.status, { error: data.error?.message || "upstream AI request failed" });
@@ -293,7 +324,10 @@ async function handleChat(request, response) {
       { role: "system", content: "上一轮模型输出疑似不完整或提前中断。请忽略不完整文本，重新回答最后一条用户消息。仍然必须遵守本轮强制规则：不要套固定话术，不要连续追问，围绕官网产品知识和客户当前问题给出完整中文答复，并自然收尾。" },
       ...messages
     ];
-    const repaired = await requestAiCompletion(repairMessages, 1100);
+    const repaired = await requestAiCompletion(
+      repairMessages,
+      deepDiagnosis ? completionOptions : { maxTokens: 1100 }
+    );
     if (repaired.upstream.ok) {
       const repairedReply = normalizeAiReply(repaired.data.choices?.[0]?.message?.content || "");
       if (repairedReply) {

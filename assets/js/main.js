@@ -254,7 +254,17 @@ const chatQuickPrompts = {
   demo: "我想看 AI APP 产品演示",
   product: "帮我判断适合哪个 AI APP",
   case: "我想了解类似案例",
-  privacy: "我想了解隐私政策"
+  privacy: "我想了解隐私政策",
+  deepDiagnosis: "请基于上面的信息做一次完整诊断，帮我拆解增长卡点、AI 解决方案和落地步骤"
+};
+
+const chatInputPlaceholders = {
+  diagnosis: "描述你的行业、目标和增长卡点...",
+  service: "描述你想了解的服务方式...",
+  demo: "描述你想看的产品场景...",
+  product: "描述你想匹配的产品场景...",
+  case: "描述你想对标的行业或案例...",
+  privacy: "描述你关心的数据或资料使用问题..."
 };
 
 const footerPromptTopics = {
@@ -324,6 +334,42 @@ function getChatReply(text, intent) {
   }
 
   return "我会先从业务目标、现有流程、团队执行和可衡量指标四个方面帮你梳理。请描述你的行业和当前增长问题。";
+}
+
+function compactChatValue(text) {
+  return String(text || "").replace(/\s+/g, "").toLowerCase();
+}
+
+function isDeepDiagnosisRequest(text, options = {}) {
+  if (options.deepDiagnosis) return true;
+  const value = compactChatValue(text);
+  return /详细方案|完整方案|完整诊断|深度诊断|完整分析|深度分析|帮我拆解|详细拆解|系统拆解|系统方案|全面诊断|完整规划|deepdiagnosis|deepdiagnose/i.test(value);
+}
+
+function getChatLoadingMessage(text, intent, options = {}) {
+  if (isDeepDiagnosisRequest(text, options)) {
+    return "正在做完整分析，可能需要 10-20 秒。";
+  }
+
+  const value = compactChatValue(text);
+
+  if (/(隐私|数据|资料|授权|保密)/u.test(value) || intent === "privacy") {
+    return "我正在核对资料使用边界...";
+  }
+
+  if (/(服务|周期|报价|合作|实施|陪跑|交付|顾问)/u.test(value) || intent === "service") {
+    return "我正在整理服务路径...";
+  }
+
+  if (/(案例|对标|同行|参考)/u.test(value) || intent === "case") {
+    return "我正在对照案例场景...";
+  }
+
+  if (/(产品|演示|aiapp|app|功能|工具)/i.test(value) || /ai?(引流|招商|运营|培训)/i.test(value) || ["demo", "product"].includes(intent)) {
+    return "我正在匹配对应的 AI APP...";
+  }
+
+  return "我正在判断增长卡点...";
 }
 
 function normalizeChatReply(text) {
@@ -496,26 +542,22 @@ function setChatIntent(widget, intent) {
   widget.setAttribute("data-chat-intent", intent);
   const input = widget.querySelector("[data-chat-input]");
   if (input) {
-    input.placeholder =
-      intent === "service"
-        ? "描述你想了解的服务方式..."
-        : intent === "demo"
-          ? "描述你想看的产品场景..."
-          : "描述你的行业和增长问题...";
+    input.placeholder = chatInputPlaceholders[intent] || chatInputPlaceholders.diagnosis;
   }
   appendChatMessage(widget, "bot", chatIntentStarters[intent] || chatIntentStarters.diagnosis);
 }
 
-async function requestAiReply(widget, text, intent) {
+async function requestAiReply(widget, text, intent, options = {}) {
   if (window.location.protocol === "file:") {
     throw new Error("真实 AI 对话需要通过本地服务或线上站点访问，当前 file:// 页面无法调用 /api/chat。");
   }
 
   const history = Array.isArray(widget._chatHistory) ? widget._chatHistory.slice(-10) : [];
+  const deepDiagnosis = isDeepDiagnosisRequest(text, options);
   const response = await fetch("/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: text, intent, history })
+    body: JSON.stringify({ message: text, intent, history, deepDiagnosis })
   });
 
   if (!response.ok) {
@@ -527,19 +569,20 @@ async function requestAiReply(widget, text, intent) {
   return String(payload.reply || "").trim();
 }
 
-async function submitChatPrompt(widget, text) {
+async function submitChatPrompt(widget, text, options = {}) {
   const value = String(text || "").trim();
   if (!value) return;
   const intent = widget.getAttribute("data-chat-intent") || "diagnosis";
+  const deepDiagnosis = isDeepDiagnosisRequest(value, options);
   appendChatMessage(widget, "user", value);
 
   widget._chatHistory = Array.isArray(widget._chatHistory) ? widget._chatHistory : [];
   widget._chatHistory.push({ role: "user", content: value });
 
-  const pending = appendChatMessage(widget, "bot", "我先看一下你这个场景...", { pending: true });
+  const pending = appendChatMessage(widget, "bot", getChatLoadingMessage(value, intent, { deepDiagnosis }), { pending: true });
 
   try {
-    const reply = await requestAiReply(widget, value, intent);
+    const reply = await requestAiReply(widget, value, intent, { deepDiagnosis });
     if (!reply) throw new Error("AI 服务没有返回有效内容");
     const finalReply = normalizeChatReply(reply);
     updateChatReplyMessages(widget, pending, finalReply);
@@ -573,8 +616,9 @@ function initChatWidget(widget) {
   widget.querySelectorAll("[data-chat-prompt]").forEach((button) => {
     button.addEventListener("click", () => {
       const intent = button.getAttribute("data-chat-intent");
+      const deepDiagnosis = button.getAttribute("data-chat-deep") === "true";
       if (intent) widget.setAttribute("data-chat-intent", intent);
-      submitChatPrompt(widget, button.getAttribute("data-chat-prompt") || button.textContent);
+      submitChatPrompt(widget, button.getAttribute("data-chat-prompt") || button.textContent, { deepDiagnosis });
     });
   });
 }
@@ -605,6 +649,7 @@ function createChatOverlay() {
         <button type="button" data-chat-intent="diagnosis" data-chat-prompt="${chatQuickPrompts.diagnosis}">预约诊断</button>
         <button type="button" data-chat-intent="service" data-chat-prompt="${chatQuickPrompts.service}">服务方式</button>
         <button type="button" data-chat-intent="demo" data-chat-prompt="${chatQuickPrompts.demo}">产品演示</button>
+        <button type="button" data-chat-intent="diagnosis" data-chat-deep="true" data-chat-prompt="${chatQuickPrompts.deepDiagnosis}">深度诊断</button>
       </div>
       <form class="chat-input-row" data-chat-form>
         <input type="text" data-chat-input placeholder="描述你的行业和增长问题..." aria-label="输入增长问题" />
