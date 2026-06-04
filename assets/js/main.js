@@ -255,7 +255,7 @@ const chatQuickPrompts = {
   product: "帮我判断适合哪个 AI APP",
   case: "我想了解类似案例",
   privacy: "我想了解隐私政策",
-  deepDiagnosis: "请基于上面的信息做一次完整诊断，帮我拆解增长卡点、AI 解决方案和落地步骤"
+  deepDiagnosis: "我想做一次完整诊断，请帮我判断增长卡点，再拆解 AI 解决方案和落地步骤"
 };
 
 const chatInputPlaceholders = {
