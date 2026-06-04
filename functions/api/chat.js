@@ -238,7 +238,11 @@ export async function onRequestPost(context) {
   ];
 
   const completionOptions = deepDiagnosis
-    ? { maxTokens: aiDeepMaxTokens, aiThinkingType: aiDeepThinkingType, timeoutMs: aiDeepThinkingTimeoutMs }
+    ? {
+      maxTokens: aiDeepMaxTokens,
+      aiThinkingType: aiDeepThinkingType,
+      ...(aiDeepThinkingType !== "disabled" ? { timeoutMs: aiDeepThinkingTimeoutMs } : {})
+    }
     : {};
   let upstream;
   let data;

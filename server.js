@@ -317,7 +317,11 @@ async function handleChat(request, response) {
   ];
 
   const completionOptions = deepDiagnosis
-    ? { maxTokens: aiDeepMaxTokens, thinkingType: aiDeepThinkingType, timeoutMs: aiDeepThinkingTimeoutMs }
+    ? {
+      maxTokens: aiDeepMaxTokens,
+      thinkingType: aiDeepThinkingType,
+      ...(aiDeepThinkingType !== "disabled" ? { timeoutMs: aiDeepThinkingTimeoutMs } : {})
+    }
     : {};
   let upstream;
   let data;
