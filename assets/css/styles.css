@@ -26215,6 +26215,11 @@ body.service-page .main {
 
 .contact-page .contact-ai-priority-layout {
   width: min(var(--wide), calc(100% - 48px));
+  padding: 46px;
+  border: 1px solid rgba(20, 20, 20, 0.055);
+  border-radius: 42px;
+  background: linear-gradient(180deg, #f7fbff 0%, #f2f7ff 54%, #f8f3ec 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.74);
 }
 
 .contact-page .contact-chat-primary {
@@ -26223,9 +26228,9 @@ body.service-page .main {
 
 .contact-page .contact-chat-panel.contact-chat-primary .contact-ai-chat {
   display: grid;
-  grid-template-rows: auto auto auto;
+  grid-template-rows: auto minmax(560px, 1fr) auto auto;
   width: 100%;
-  min-height: 0;
+  min-height: 920px;
   height: auto;
   overflow: visible;
   border: 1px solid rgba(20, 20, 20, 0.08);
@@ -26259,7 +26264,7 @@ body.service-page .main {
 
 .contact-page .contact-chat-panel.contact-chat-primary .contact-ai-chat .chat-messages {
   gap: 18px;
-  min-height: 320px;
+  min-height: 560px;
   max-height: none;
   padding: 30px 34px 22px;
   overflow: visible;
@@ -26398,6 +26403,8 @@ body.service-page .main {
 
   .contact-page .contact-ai-priority-layout {
     width: min(100% - 32px, var(--wide));
+    padding: 14px;
+    border-radius: 28px;
   }
 
   .contact-page .contact-chat-primary {
@@ -26405,6 +26412,7 @@ body.service-page .main {
   }
 
   .contact-page .contact-chat-panel.contact-chat-primary .contact-ai-chat {
+    min-height: 720px;
     border-radius: 24px;
   }
 
@@ -26412,8 +26420,12 @@ body.service-page .main {
     padding: 22px 18px 14px;
   }
 
+  .contact-page .contact-ai-chat .chat-status {
+    display: none;
+  }
+
   .contact-page .contact-chat-panel.contact-chat-primary .contact-ai-chat .chat-messages {
-    min-height: 260px;
+    min-height: 420px;
     padding: 22px 18px 16px;
   }
 
