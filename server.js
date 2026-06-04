@@ -19,8 +19,9 @@ if (fs.existsSync(envPath)) {
 }
 
 const port = Number(process.env.PORT || 4188);
-const aiBaseUrl = (process.env.TOKEN_PLAN_BASE_URL || "https://token-plan-cn.xiaomimimo.com/v1").replace(/\/$/, "");
-const aiModel = process.env.TOKEN_PLAN_MODEL || "mimo-v2.5-pro";
+const aiBaseUrl = (process.env.TOKEN_PLAN_BASE_URL || "https://api.moonshot.cn/v1").replace(/\/$/, "");
+const aiModel = process.env.TOKEN_PLAN_MODEL || "kimi-k2.6";
+const aiTemperature = Number(process.env.TOKEN_PLAN_TEMPERATURE || 1);
 const apiKey = process.env.TOKEN_PLAN_API_KEY;
 
 const mimeTypes = {
@@ -228,7 +229,7 @@ async function requestAiCompletion(messages, maxTokens = 900) {
     body: JSON.stringify({
       model: aiModel,
       messages,
-      temperature: 0.24,
+      temperature: Number.isFinite(aiTemperature) ? aiTemperature : 1,
       max_tokens: maxTokens
     })
   });
