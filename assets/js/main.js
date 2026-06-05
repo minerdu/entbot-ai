@@ -349,10 +349,9 @@ function isDeepDiagnosisRequest(text, options = {}) {
 function isLongPlanRequest(text, options = {}) {
   if (options.longPlan) return true;
   const value = compactChatValue(text);
-  const detailIntent = /(详细|完整|系统|方案|解决方案|规划|计划|报告|拆解|拆一下|拆一拆|落地|实施|路径|打法|策略|路线图|sop|诊断书|建议书|执行步骤|落地步骤|怎么做|如何做|帮我做|出一份|设计|制定|搭建|longplan)/i.test(value);
-  const aiWorkflow = /(ai引流|ai招商|ai运营|ai培训|aiapp|ai解决|招商ai|引流ai|运营ai|培训ai|增长ai|增长方案|招商方案|获客方案|运营方案|培训方案|私域方案|转化方案)/i.test(value);
-  const workflowPlanIntent = /(方案|解决|详细|完整|拆|落地|实施|规划|路径|怎么做|如何做|帮我做|出一份|设计|制定|搭建|打法|策略)/i.test(value);
-  return detailIntent || (aiWorkflow && workflowPlanIntent);
+  const prefix = "(详细|解决|具体|实施|完整)";
+  const suffix = "(方案|规划|计划|落地|路径|步骤|打法|策略|执行)";
+  return new RegExp(`${prefix}.{0,14}${suffix}`, "i").test(value) || /longplan/i.test(value);
 }
 
 const chatLoadingSteps = {
@@ -365,7 +364,7 @@ const chatLoadingSteps = {
   ],
   insight: [
     "识别表面问题和真实增长瓶颈",
-    "判断客户卡在获客、转化还是运营",
+    "用 Kimi thinking 判断真实增长瓶颈",
     "确认最优先的 AI 切入口",
     "匹配对应的 AI APP 和工作流",
     "生成顾问式诊断结论"
@@ -586,6 +585,14 @@ function setChatLoadingStep(row, config = {}, index = 0) {
 
   const messages = row.closest("[data-chat-messages]");
   if (messages) messages.scrollTop = messages.scrollHeight;
+}
+
+function setChatStreamStatus(row, message) {
+  if (!row || !message) return;
+  const status = row.querySelector(".chat-loading-status");
+  if (status) status.textContent = message;
+  const activeStep = row.querySelector(".chat-loading-step.is-active");
+  if (activeStep) activeStep.textContent = message;
 }
 
 function renderChatLoading(bubble, config = {}) {
@@ -823,6 +830,14 @@ function updateChatMessage(row, text) {
   row.removeAttribute("data-chat-pending");
 }
 
+function updateChatPartialMessage(row, text) {
+  if (!row) return;
+  stopChatLoading(row);
+  const bubble = row.querySelector(".chat-bubble");
+  if (bubble) renderChatText(bubble, text);
+  row.removeAttribute("data-chat-pending");
+}
+
 function updateChatReplyMessages(widget, pendingRow, text) {
   const chunks = splitChatReplyIntoMessages(text);
   const [firstChunk, ...restChunks] = chunks.length ? chunks : [text];
@@ -841,6 +856,73 @@ function setChatIntent(widget, intent) {
   appendChatMessage(widget, "bot", chatIntentStarters[intent] || chatIntentStarters.diagnosis);
 }
 
+async function readChatStream(response, handlers = {}) {
+  const reader = response.body?.getReader();
+  if (!reader) throw new Error("AI 服务没有返回可读取的流式内容");
+
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let eventName = "message";
+  let dataLines = [];
+  let streamedReply = "";
+  let finalReply = "";
+
+  const flushEvent = () => {
+    if (!dataLines.length) {
+      eventName = "message";
+      return;
+    }
+
+    let payload = {};
+    try {
+      payload = JSON.parse(dataLines.join("\n"));
+    } catch {
+      payload = {};
+    }
+
+    if (eventName === "status" && payload.message) {
+      handlers.onStatus?.(payload.message);
+    } else if (eventName === "content_delta" && payload.text) {
+      streamedReply += payload.text;
+      handlers.onDelta?.(streamedReply);
+    } else if (eventName === "final") {
+      finalReply = String(payload.reply || streamedReply || "").trim();
+    } else if (eventName === "error") {
+      throw new Error(payload.error || "AI 服务暂时不可用");
+    }
+
+    eventName = "message";
+    dataLines = [];
+  };
+
+  while (true) {
+    const { done, value } = await reader.read();
+    buffer += decoder.decode(value || new Uint8Array(), { stream: !done });
+
+    const lines = buffer.split(/\r?\n/);
+    buffer = lines.pop() || "";
+
+    for (const line of lines) {
+      if (!line) {
+        flushEvent();
+      } else if (line.startsWith("event:")) {
+        eventName = line.slice(6).trim() || "message";
+      } else if (line.startsWith("data:")) {
+        dataLines.push(line.slice(5).trim());
+      }
+    }
+
+    if (done) break;
+  }
+
+  if (buffer.trim()) {
+    if (buffer.startsWith("data:")) dataLines.push(buffer.slice(5).trim());
+    flushEvent();
+  }
+
+  return String(finalReply || streamedReply || "").trim();
+}
+
 async function requestAiReply(widget, text, intent, options = {}) {
   if (window.location.protocol === "file:") {
     throw new Error("真实 AI 对话需要通过本地服务或线上站点访问，当前 file:// 页面无法调用 /api/chat。");
@@ -849,15 +931,23 @@ async function requestAiReply(widget, text, intent, options = {}) {
   const history = Array.isArray(widget._chatHistory) ? widget._chatHistory.slice(-10) : [];
   const deepDiagnosis = isDeepDiagnosisRequest(text, options);
   const longPlan = isLongPlanRequest(text, options);
+  const stream = Boolean(deepDiagnosis || longPlan);
   const response = await fetch("/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: text, intent, history, deepDiagnosis, longPlan })
+    body: JSON.stringify({ message: text, intent, history, deepDiagnosis, longPlan, stream })
   });
 
   if (!response.ok) {
     const errorPayload = await response.json().catch(() => ({}));
     throw new Error(errorPayload.error || "AI 服务暂时不可用");
+  }
+
+  if (stream && response.headers.get("content-type")?.includes("text/event-stream")) {
+    return readChatStream(response, {
+      onStatus: (message) => setChatStreamStatus(options.pending, message),
+      onDelta: (reply) => updateChatPartialMessage(options.pending, reply)
+    });
   }
 
   const payload = await response.json();
@@ -879,7 +969,7 @@ async function submitChatPrompt(widget, text, options = {}) {
   const pending = appendChatMessage(widget, "bot", loading.steps[0], { pending: true, loading });
 
   try {
-    const reply = await requestAiReply(widget, value, intent, { deepDiagnosis, longPlan });
+    const reply = await requestAiReply(widget, value, intent, { deepDiagnosis, longPlan, pending });
     if (!reply) throw new Error("AI 服务没有返回有效内容");
     const finalReply = normalizeChatReply(reply);
     updateChatReplyMessages(widget, pending, finalReply);

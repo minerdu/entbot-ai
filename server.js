@@ -27,8 +27,16 @@ const aiTemperature =
     : Number(process.env.TOKEN_PLAN_TEMPERATURE);
 const aiThinkingType = (process.env.TOKEN_PLAN_THINKING || "disabled").trim();
 const aiDeepThinkingType = (process.env.TOKEN_PLAN_DEEP_THINKING || "enabled").trim();
-const aiDeepMaxTokens = readPositiveNumber(process.env.TOKEN_PLAN_DEEP_MAX_TOKENS, 5000);
-const aiDeepThinkingTimeoutMs = readPositiveNumber(process.env.TOKEN_PLAN_DEEP_THINKING_TIMEOUT_MS, 30000);
+const aiDeepMaxCompletionTokens = clampNumber(
+  readPositiveNumber(process.env.TOKEN_PLAN_DEEP_MAX_COMPLETION_TOKENS || process.env.TOKEN_PLAN_DEEP_MAX_TOKENS, 3000),
+  2500,
+  3000
+);
+const aiDeepThinkingTimeoutMs = clampNumber(
+  readPositiveNumber(process.env.TOKEN_PLAN_DEEP_THINKING_TIMEOUT_MS, 120000),
+  90000,
+  120000
+);
 const apiKey = process.env.TOKEN_PLAN_API_KEY;
 
 const mimeTypes = {
@@ -115,6 +123,10 @@ function readPositiveNumber(value, fallback) {
   return Number.isFinite(number) && number > 0 ? number : fallback;
 }
 
+function clampNumber(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
 function isDeepDiagnosticRequest(message) {
   const value = String(message || "").replace(/\s+/g, "").toLowerCase();
   return /深度诊断|诊断判断|真正卡在哪|卡在哪个增长环节|优先用哪类ai|优先用哪个ai|优先切入|增长卡点|deepdiagnosis|deepdiagnose/i.test(value);
@@ -122,10 +134,9 @@ function isDeepDiagnosticRequest(message) {
 
 function isLongPlanRequest(message) {
   const value = String(message || "").replace(/\s+/g, "").toLowerCase();
-  const detailIntent = /(详细|完整|系统|方案|解决方案|规划|计划|报告|拆解|拆一下|拆一拆|落地|实施|路径|打法|策略|路线图|sop|诊断书|建议书|执行步骤|落地步骤|怎么做|如何做|帮我做|出一份|设计|制定|搭建|longplan)/i.test(value);
-  const aiWorkflow = /(ai引流|ai招商|ai运营|ai培训|aiapp|ai解决|招商ai|引流ai|运营ai|培训ai|增长ai|增长方案|招商方案|获客方案|运营方案|培训方案|私域方案|转化方案)/i.test(value);
-  const workflowPlanIntent = /(方案|解决|详细|完整|拆|落地|实施|规划|路径|怎么做|如何做|帮我做|出一份|设计|制定|搭建|打法|策略)/i.test(value);
-  return detailIntent || (aiWorkflow && workflowPlanIntent);
+  const prefix = "(详细|解决|具体|实施|完整)";
+  const suffix = "(方案|规划|计划|落地|路径|步骤|打法|策略|执行)";
+  return new RegExp(`${prefix}.{0,14}${suffix}`, "i").test(value) || /longplan/i.test(value);
 }
 
 function buildTurnPolicy(history, message, options = {}) {
@@ -270,24 +281,42 @@ function isLikelyIncompleteReply(reply) {
   return /(因为|没有|需要|通过|建议|包括|核心在于|通常是|可以先|先把|拆成|而是|不是)$/u.test(value);
 }
 
-async function requestAiCompletion(messages, options = {}) {
-  const maxTokens = options.maxTokens ?? 900;
+function shouldSendTemperature(thinkingType) {
+  if (!Number.isFinite(aiTemperature)) return false;
+  if (/^kimi-k2\.(5|6)$/i.test(aiModel)) return false;
+  return thinkingType !== "disabled";
+}
+
+function buildAiRequestBody(messages, options = {}) {
+  const maxCompletionTokens = options.maxCompletionTokens ?? options.maxTokens ?? 900;
   const thinkingType = options.thinkingType === undefined ? aiThinkingType : options.thinkingType;
-  const controller = options.timeoutMs ? new AbortController() : undefined;
-  const timeout = controller ? setTimeout(() => controller.abort(), options.timeoutMs) : undefined;
   const requestBody = {
     model: aiModel,
     messages,
-    max_tokens: maxTokens
+    max_completion_tokens: maxCompletionTokens
   };
+
+  if (options.stream) requestBody.stream = true;
 
   if (thinkingType && thinkingType !== "default") {
     requestBody.thinking = { type: thinkingType };
   }
 
-  if (Number.isFinite(aiTemperature) && thinkingType !== "disabled") {
+  if (shouldSendTemperature(thinkingType)) {
     requestBody.temperature = aiTemperature;
   }
+
+  return requestBody;
+}
+
+async function readUpstreamJson(upstream) {
+  return upstream.json().catch(() => ({}));
+}
+
+async function requestAiCompletion(messages, options = {}) {
+  const controller = options.timeoutMs ? new AbortController() : undefined;
+  const timeout = controller ? setTimeout(() => controller.abort(), options.timeoutMs) : undefined;
+  const requestBody = buildAiRequestBody(messages, options);
 
   try {
     const upstream = await fetch(`${aiBaseUrl}/chat/completions`, {
@@ -300,11 +329,151 @@ async function requestAiCompletion(messages, options = {}) {
       signal: controller?.signal
     });
 
-    const data = await upstream.json().catch(() => ({}));
+    const data = await readUpstreamJson(upstream);
     return { upstream, data };
   } finally {
     if (timeout) clearTimeout(timeout);
   }
+}
+
+function writeSse(response, event, payload) {
+  response.write(`event: ${event}\n`);
+  response.write(`data: ${JSON.stringify(payload)}\n\n`);
+}
+
+async function requestAiCompletionStream(messages, options = {}, handlers = {}) {
+  const controller = options.timeoutMs ? new AbortController() : undefined;
+  const timeout = controller ? setTimeout(() => controller.abort(), options.timeoutMs) : undefined;
+  const requestBody = buildAiRequestBody(messages, { ...options, stream: true });
+
+  try {
+    const upstream = await fetch(`${aiBaseUrl}/chat/completions`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(requestBody),
+      signal: controller?.signal
+    });
+
+    if (!upstream.ok || !upstream.body) {
+      const data = await readUpstreamJson(upstream);
+      return { upstream, data, reply: "" };
+    }
+
+    const reader = upstream.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let reply = "";
+    let model = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      buffer += decoder.decode(value || new Uint8Array(), { stream: !done });
+      const lines = buffer.split(/\r?\n/);
+      buffer = lines.pop() || "";
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed.startsWith("data:")) continue;
+
+        const payload = trimmed.slice(5).trim();
+        if (!payload || payload === "[DONE]") continue;
+
+        let chunk;
+        try {
+          chunk = JSON.parse(payload);
+        } catch {
+          continue;
+        }
+
+        if (chunk.model) model = chunk.model;
+        const choice = Array.isArray(chunk.choices) ? chunk.choices[0] : null;
+        const delta = choice?.delta || {};
+        const reasoning = delta.reasoning_content || "";
+        const content = delta.content || "";
+
+        if (reasoning && handlers.onReasoning) handlers.onReasoning(reasoning);
+        if (content) {
+          reply += content;
+          if (handlers.onContent) handlers.onContent(content, reply);
+        }
+      }
+
+      if (done) break;
+    }
+
+    return {
+      upstream,
+      data: {
+        model: model || aiModel,
+        choices: [{ message: { content: reply } }]
+      },
+      reply
+    };
+  } finally {
+    if (timeout) clearTimeout(timeout);
+  }
+}
+
+async function streamChatCompletion(response, messages, options = {}) {
+  response.writeHead(200, {
+    "Content-Type": "text/event-stream; charset=utf-8",
+    "Cache-Control": "no-cache, no-transform",
+    Connection: "keep-alive",
+    "X-Accel-Buffering": "no"
+  });
+
+  let lastStatusAt = 0;
+  let reasoningChunks = 0;
+  writeSse(response, "status", { message: "Kimi thinking 已启动，正在分析问题结构" });
+
+  let result;
+  try {
+    result = await requestAiCompletionStream(messages, options, {
+      onReasoning: () => {
+        reasoningChunks += 1;
+        const now = Date.now();
+        if (reasoningChunks === 1 || now - lastStatusAt > 5000) {
+          lastStatusAt = now;
+          writeSse(response, "status", {
+            message: reasoningChunks < 3 ? "正在识别增长主矛盾" : "正在把分析转成可执行建议"
+          });
+        }
+      },
+      onContent: (delta) => {
+        writeSse(response, "content_delta", { text: delta });
+      }
+    });
+  } catch (error) {
+    const errorMessage =
+      error?.name === "AbortError"
+        ? "Kimi thinking 请求超时，请稍后重试，或先缩小问题范围。"
+        : error.message || "upstream AI request failed";
+    writeSse(response, "error", { error: errorMessage });
+    response.end();
+    return;
+  }
+
+  if (!result.upstream.ok) {
+    writeSse(response, "error", { error: result.data.error?.message || "upstream AI request failed" });
+    response.end();
+    return;
+  }
+
+  const reply = normalizeAiReply(result.data.choices?.[0]?.message?.content || result.reply || "");
+  if (!reply) {
+    writeSse(response, "error", { error: "AI 服务没有返回有效内容" });
+    response.end();
+    return;
+  }
+
+  writeSse(response, "final", {
+    reply,
+    model: result.data.model || aiModel
+  });
+  response.end();
 }
 
 async function handleChat(request, response) {
@@ -340,25 +509,35 @@ async function handleChat(request, response) {
   const longPlanThinkingType = aiDeepThinkingType && aiDeepThinkingType !== "disabled" ? aiDeepThinkingType : "enabled";
   const completionOptions = longPlan
     ? {
-      maxTokens: aiDeepMaxTokens,
+      maxCompletionTokens: aiDeepMaxCompletionTokens,
       thinkingType: longPlanThinkingType,
       timeoutMs: aiDeepThinkingTimeoutMs
     }
     : deepDiagnosis
-      ? { maxTokens: 1200, thinkingType: "disabled" }
+      ? {
+        maxCompletionTokens: Math.min(aiDeepMaxCompletionTokens, 2500),
+        thinkingType: longPlanThinkingType,
+        timeoutMs: aiDeepThinkingTimeoutMs
+      }
     : {};
+
+  if (payload.stream && (longPlan || deepDiagnosis)) {
+    await streamChatCompletion(response, messages, completionOptions);
+    return;
+  }
+
   let upstream;
   let data;
 
   try {
     ({ upstream, data } = await requestAiCompletion(messages, completionOptions));
   } catch (error) {
-    if (!longPlan) throw error;
-    ({ upstream, data } = await requestAiCompletion(messages, completionOptions));
-  }
-
-  if (longPlan && !upstream.ok) {
-    ({ upstream, data } = await requestAiCompletion(messages, completionOptions));
+    const errorMessage =
+      error?.name === "AbortError"
+        ? "AI thinking request timed out"
+        : error.message || "upstream AI request failed";
+    sendJson(response, error?.name === "AbortError" ? 504 : 500, { error: errorMessage });
+    return;
   }
 
   if (!upstream.ok) {
@@ -368,14 +547,14 @@ async function handleChat(request, response) {
 
   let reply = normalizeAiReply(data.choices?.[0]?.message?.content || "");
 
-  if (isLikelyIncompleteReply(reply)) {
+  if (!longPlan && !deepDiagnosis && isLikelyIncompleteReply(reply)) {
     const repairMessages = [
       { role: "system", content: "上一轮模型输出疑似不完整或提前中断。请忽略不完整文本，重新回答最后一条用户消息。仍然必须遵守本轮强制规则：不要套固定话术，不要连续追问，围绕官网产品知识和客户当前问题给出完整中文答复，并自然收尾。" },
       ...messages
     ];
     const repaired = await requestAiCompletion(
       repairMessages,
-      longPlan ? completionOptions : { maxTokens: 1100 }
+      { maxCompletionTokens: 1100 }
     );
     if (repaired.upstream.ok) {
       const repairedReply = normalizeAiReply(repaired.data.choices?.[0]?.message?.content || "");
